@@ -1,7 +1,5 @@
 import pygame.display
-
-from source.game import Game, GameState
-from source.container import ContainerStates
+from source import Game, GameState, ContainerStates
 
 if __name__ == '__main__':
     game = Game()
