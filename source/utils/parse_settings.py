@@ -5,7 +5,9 @@ import tomli
 def toml_loader(func):
     """Simple toml decorator function for parsing files."""
     def wrapper(filename, header, **kwargs):
-        class OpenToml:
+        """Inner Wrapper function."""
+        class OpenToml(object):
+            """Context-Manager for handling the open binary stream."""
             _file: BinaryIO
 
             def __init__(self, _filename):
@@ -18,7 +20,8 @@ def toml_loader(func):
             def __exit__(self, exc_type, exc_val, exc_tb):
                 self._file.close()
 
-        func(**kwargs)
+        exec(func(**kwargs))  # execute the decorated function.
+        
 
         with OpenToml(filename) as file:
             _config = tomli.load(file)
@@ -30,9 +33,10 @@ def toml_loader(func):
 
 
 class Settings:
+    """Gives a mothodology to be able to load and parse values from the ``settings.toml`` file."""
     _file = 'settings.toml'
 
-    def __int__(self, game):
+    def __int__(self, game) -> None:  ### fix to init!!! ---- todo - find uses 
         self.game = game
 
     def get_graphics(self) -> dict:
