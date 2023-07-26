@@ -1,9 +1,11 @@
 from abc import ABC, abstractmethod
+from source.const import EntityState
 from typing import Type
 
 
 class Entity:
     def __init__(self, health, max_health, damage: int) -> None:
+        self.state = EntityState.ALIVE
         self.health = health
         self.max_health = max_health
         self.damage = damage
@@ -19,6 +21,7 @@ class Entity:
         hp = self.health - value
         if self.health <= 0:
             self.health = 0
+            self.state = EntityState.DEAD
             return self.on_death()
         self.health = hp
     

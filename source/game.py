@@ -1,15 +1,8 @@
 from source.map import Map
 from source.player import Player
 from source.utils import *
-from enum import Enum
+from source.const import GameState
 import pygame
-
-
-class GameState(Enum):
-    NONE = 0
-    RUNNING = 1
-    ENDED = 2
-    GAME_OVER = 3
 
 
 class Game:
@@ -81,6 +74,3 @@ class Game:
                         self.player.interact()
                     case pygame.K_i:
                         self.player.inventory.open()
-                ...
-            ...
-        ...

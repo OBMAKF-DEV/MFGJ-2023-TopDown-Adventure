@@ -1,4 +1,4 @@
-import pygame.display
+import pygame
 from source import Game, GameState, ContainerStates
 
 

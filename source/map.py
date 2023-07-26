@@ -42,7 +42,6 @@ class MapTiles:
     """
     WALL = Tile('resources/img/tiles/path_center.png', False, False, None)
     FLOOR = Tile('resources/img/tiles/grass1.png', True, False, None)
-    #CONTAINER = Tile('resources/img/tiles/crate.png', False, True, Container([Item('Apple', None)]))
 
 
 class Map:

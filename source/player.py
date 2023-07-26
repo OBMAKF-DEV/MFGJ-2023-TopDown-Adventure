@@ -3,6 +3,7 @@ from source.utils.directions import *
 from source.map import Tile
 from source.items import Item
 from source.items import InteractionObject
+from source.const import GameState, EntityState
 from source.entity import Entity
 from source.container import Container
 import pygame
@@ -26,13 +27,15 @@ class Player(Entity):
             self, game, position: tuple[int, int] = (1, 1),
             health: int = 100, max_health: int = 100, damage: int = 5) -> None:
         super(Player, self).__init__(health, max_health, damage)
+        self.state = EntityState.ALIVE
         self.game = game
         self.position = position
         self.facing_direction = Directions.SOUTH
         self.inventory = Inventory(self, [])
     
     def on_death(self) -> None:
-        self.game.set_state(3)
+        self.state = EntityState.DEAD
+        self.game.state = GameState.GAME_OVER
     
     def render(self) -> None:
         icon = {
@@ -41,6 +44,7 @@ class Player(Entity):
             Directions.WEST: 'resources/img/player_L.png',
             Directions.EAST: 'resources/img/player_R.png'
         }
+
         image = pygame.transform.scale(pygame.image.load(icon[self.facing_direction]), (SCALE, SCALE))
         rect = pygame.rect.Rect(self.position[0] * SCALE, self.position[1] * SCALE, SCALE, SCALE)
         self.game.screen.blit(image, rect)
