@@ -1,6 +1,6 @@
 from source.map import Map
 from source.player import Player
-from source.utils.directions import *
+from source.utils import *
 from enum import Enum
 import pygame
 
@@ -21,7 +21,9 @@ class Game:
     
     def __init__(self) -> None:
         pygame.init()
-        self.screen = pygame.display.set_mode((800, 600))
+        self.settings = Settings
+        self.graphics = Settings().get_graphics()
+        self.screen = pygame.display.set_mode((self.graphics['Width'], self.graphics['Height']))
         self.clock = pygame.time.Clock()
         self.player = Player(self)
         self.map = Map(self)
