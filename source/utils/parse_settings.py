@@ -1,3 +1,5 @@
+"""This module provides accessability and functionality for parsing the ``.TOML`` settings file."""
+
 from typing import BinaryIO, Any
 import tomli
 
@@ -20,7 +22,7 @@ def toml_loader(func):
             def __exit__(self, exc_type, exc_val, exc_tb):
                 self._file.close()
 
-        exec(func(**kwargs))  # execute the decorated function.
+        func(**kwargs) # execute the decorated function.
         
 
         with OpenToml(filename) as file:
@@ -36,19 +38,20 @@ class Settings:
     """Gives a mothodology to be able to load and parse values from the ``settings.toml`` file."""
     _file = 'settings.toml'
 
-    def __int__(self, game) -> None:  ### fix to init!!! ---- todo - find uses 
+    def __init__(self, game) -> None:
         self.game = game
 
-    def get_graphics(self) -> dict:
-        return self._get_header(self._file, 'Graphics')
-
-    def get_graphic(self, __kw) -> Any:
-        try:
-            return self.get_graphics()[__kw]
-        except KeyError as exc:
-            raise KeyError(exc) from exc
+    def get_graphics(self) -> dict[str, Any]:
+        """Retrieves the graphical settings assigned for the application"""
+        _dict = self._get_header(self._file, 'Graphics')
+        return _dict
 
     @toml_loader
-    def _get_header(self, file, header) -> Any | None:
-        return
+    def _get_header(self, file: str | bytes, header: str) -> dict | None:
+        """Retrieves a parsed dictionary from a specific header.
 
+        Returns:
+            dict:   The settings values base off a header topic
+        """
+        print(f"Accessing `{header}` from {file}")
+        return
