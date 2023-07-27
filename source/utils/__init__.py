@@ -1,4 +1,4 @@
 from .directions import *
-from .parse_settings import toml_loader, Settings
+from .parse_settings import Settings
 
-__all__ = ['north', 'south', 'east', 'west', 'toml_loader', 'Settings', 'Directions']
+__all__ = ['north', 'south', 'east', 'west', 'Settings', 'Directions']
