@@ -149,7 +149,8 @@ class Game:
                         self.selected_index = max(0, self.selected_index - 1)
                     
                     if event.key == pygame.K_RETURN:
-                        self.player.inventory.items.append(self.container.items.pop(self.selected_index))
+                        if len(self.container.items) > 0:
+                            self.player.inventory.items.append(self.container.items.pop(self.selected_index))
                     
                     if event.key == pygame.K_x:
                         for _ in self.container.items:
