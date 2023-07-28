@@ -1,4 +1,4 @@
-from source.const import SCALE
+from source.const import SCALE, PLAYER_ICONS
 from source.utils.directions import *
 from source.map import Tile
 from source.items import Item
@@ -27,10 +27,13 @@ class Player(Entity):
             self, game, position: tuple[int, int] = (5, 6),
             health: int = 100, max_health: int = 100, damage: int = 5) -> None:
         super(Player, self).__init__(health, max_health, damage)
-        self.state = EntityState.ALIVE
+        
         self.game = game
         self.position = position
+
+        self.state = EntityState.ALIVE
         self.facing_direction = Directions.SOUTH
+        
         self.inventory = Inventory(self, [])
     
     def on_death(self) -> None:
@@ -38,28 +41,29 @@ class Player(Entity):
         self.game.state = GameState.GAME_OVER
     
     def render(self) -> None:
-        icon = {
-            Directions.SOUTH: 'resources/img/player.png',
-            Directions.NORTH: 'resources/img/player_UP.png',
-            Directions.WEST: 'resources/img/player_L.png',
-            Directions.EAST: 'resources/img/player_R.png'
-        }
+        """Render in the players icon."""
         scale = self.game.graphics['SCALE']
-        image = pygame.transform.scale(pygame.image.load(icon[self.facing_direction]), (scale*4, scale*4))
+        # Create a surface for displaying icon.
         rect = pygame.rect.Rect(
             self.position[0] * scale - (scale * 2),
             self.position[1] * scale - (scale * 3),
-            scale**4,
-            scale**4)
-        self.game.screen.blit(image, rect)
+            scale ** 4, scale ** 4)
+        
+        # Load and transform, the player icon.
+        icon = pygame.transform.scale(
+            pygame.image.load(
+                PLAYER_ICONS[self.facing_direction]),
+            (scale*4, scale*4))
+        self.game.screen.blit(icon, rect)
     
     def face(self, direction):
         if direction in Directions:
             self.facing_direction = direction
     
-    def move(self, position):
+    def move(self, position, dt):
         x, y = position
         asset = self.game.map.tiles[y//4][x//4]
+        
         if isinstance(asset, Tile):
             if asset.is_passable:
                 self.position = position

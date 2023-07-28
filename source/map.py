@@ -1,14 +1,14 @@
-from source.const import SCALE
-from source.const import map_objects
+import xml.etree.ElementTree as element
+from xml.etree.ElementTree import Element
+
+from source.const import SCALE, map_objects
+from source.const.icons import TILE_ICONS
 from source.container import Container, InteractionObject, Item
-from source.door import Door, OBJECTS, KeyItem
+from source.door import Door, KeyItem
+
 from enum import Enum
 from typing import TextIO
-
-import xml.etree.ElementTree as element
 import pygame
-
-OBJECTS = OBJECTS
 
 
 class Tile:
@@ -21,7 +21,9 @@ class Tile:
         is_passable (bool): Whether the player can pass through the area.
         can_interact (bool): Whether the player can interact with the area.
     """
-    def __init__(self, image, passable: bool, can_interact: bool, _object: object | InteractionObject = None) -> None:
+    def __init__(
+            self, image, passable: bool, can_interact: bool,
+            _object: object | InteractionObject = None) -> None:
         """Initializes the `Tile`.
         
         Args:
@@ -41,18 +43,23 @@ class MapTiles:
     
     Attributes:
         WALL (Tile): Un-passable, un-interactive `Tile` containing the imaging for rendering walls.
-        FLOOR (TILE): Passable, un-interactive `Tile` containing the imaging for rendering floor.
-        CONTAINER (Tile): Un-passable, interactive `Tile` containing the imaging for rendering containers.
+        GRASS (TILE): Passable, un-interactive `Tile` containing the imaging for rendering floor.
     """
-    WALL = Tile('resources/img/tiles/path_center.png', False, False, None)
-    FLOOR = Tile('resources/img/tiles/grass1.png', True, False, None)
+    FRONT_RIGHT_WALL = Tile(TILE_ICONS['FRONT_RIGHT_WALL'], False, False, None)
+    FRONT_LEFT_WALL = Tile(TILE_ICONS['FRONT_LEFT_WALL'], False, False, None)
+    RIGHT_WALL = Tile(TILE_ICONS['RIGHT_WALL'], False, False, None)
+    LEFT_WALL = Tile(TILE_ICONS['LEFT_WALL'], False, False, None)
+    BACK_WALL = Tile(TILE_ICONS['BACK_WALL'], False, False, None)
+    WALL = Tile(TILE_ICONS['WALL'], False, False, None)
+    GRASS = Tile(TILE_ICONS['GRASS'], True, False, None)
+    TILES = Tile(TILE_ICONS['TILES'], True, False, None)
 
 
 class Map:
     """Game map.
     
     Contains methods and logic for loading and rendering game environments from a file.
-    
+    FLOOR
     Attributes:
         tiles (list[list[Tile]]): Nested array of `Tiles` loaded from the map file.
         current_map (TextIO): Open text stream of the map file containing the current map layout.
@@ -65,12 +72,12 @@ class Map:
     current_map: TextIO = None
     current_file: str | bytes = None
     objects: list[object]
-    doors: list
+    doors: list[dict]
     containers: list[dict]
+    element_data: Element | None
     
     def __init__(self, game) -> None:
         self.game = game
-        self.element_data = None
     
     def load(self, filename: str) -> None:
         """Loads the `current_map` from a map file.
@@ -95,6 +102,7 @@ class Map:
             container['x'] = int(data.attrib['x'])
             container['y'] = int(data.attrib['y'])
             container['items'] = []
+            
             for item_data in data.findall('.//object'):
                 item = dict()
                 item['name'] = item_data.attrib['name']
@@ -104,19 +112,25 @@ class Map:
                     container['items'].append(Item(item['name'], item['image']))
                     continue
                 container['items'].append(KeyItem(item['name'], item['image'], None))
+            
             self.containers.append(container)
         
         for data in self.element_data.findall('.//door'):
+            obj_attributes = ['x', 'y', 'state', 'key']  # Surface level attributes
+            
             door = dict()
-            door['x'] = int(data.attrib['x'])
-            door['y'] = int(data.attrib['y'])
-            door['state'] = data.attrib['state']
-            door['key'] = data.attrib['key']
+            for key in obj_attributes:
+                door[key] = int(data.attrib[key]) if data.attrib[key].isnumeric() \
+                    else data.attrib[key]
             door['destination'] = data.find('.//location').text
+            
             door['spawn'] = dict()
             door['spawn']['x'] = int(data.find('.//spawn').attrib['x'])
             door['spawn']['y'] = int(data.find('.//spawn').attrib['y'])
+            
             self.doors.append(door)
+            
+        self.tiles = []
         
         try:
             with open(f"resources/maps/{filename}.txt", 'r', encoding='utf-8') as map_file:
@@ -126,9 +140,23 @@ class Map:
                         tile: Tile | None = None
                         match char:
                             case '#':
-                                tile = MapTiles.WALL
+                                tile = MapTiles.BACK_WALL
+                            
+                            case '[':
+                                tile = MapTiles.LEFT_WALL
+                            
+                            case ']':
+                                tile = MapTiles.RIGHT_WALL
+                                
+                            case '{':
+                                tile = MapTiles.FRONT_LEFT_WALL
+                            
+                            case '}':
+                                tile = MapTiles.FRONT_RIGHT_WALL
+                            
                             case '-':
-                                tile = MapTiles.FLOOR
+                                tile = MapTiles.TILES
+                            
                             case '+':
                                 for _data in self.containers:
                                     items = []
@@ -137,22 +165,27 @@ class Map:
                                         items: list[KeyItem | Item] = _data['items']
                                 
                                 container = Container(self.game, items)
-                                tile = Tile(
-                                    'resources/img/tiles/crate.png',
-                                    False, True,container)
+                                tile = Tile(TILE_ICONS['CRATE'], False, True, container)
                                 #self.game.map_containers.append(container)
+                            
                             case '>':
+                                key = None
                                 for _data in self.doors:
                                     if _data['x'] == x and _data['y'] == y:
                                         lock_state = True if _data['state'] == 'locked' else False
                                         key = _data['key'] if _data['key'] != 'None' else None
                                         destination = _data['destination']
                                         spawn = _data['spawn']['x'], _data['spawn']['y']
-                                
-                                door = Door(self.game, self.filename, (x, y), destination, spawn, key, lock_state)
-                                tile = Tile(
-                                    'resources/img/tiles/door.png', False, True, door)
-                                self.game.map_doors.append(door)
+                                image = TILE_ICONS['LEFT_DOOR']
+                                try:
+                                    _check = line.strip()[y][x-1]
+                                    if _check != '?':
+                                        image = TILE_ICONS['RIGHT_DOOR']
+                                except IndexError:
+                                    ...
+                                finally:
+                                    door = Door(self.game, self.filename, (x, y), destination, spawn, key, lock_state)
+                                    tile = Tile(image, False, True, door)
                         row.append(tile)
                     self.tiles.append(row)
                 self.current_map = map_file
@@ -160,12 +193,9 @@ class Map:
         
         except FileNotFoundError as exc:
             raise FileNotFoundError(exc) from exc
-        return self.get_objects()
     
     def remove_object_data(self, item: Item | KeyItem):
         """Removes the session XML data values containing an object."""
-        tree = element.parse(f"resources/maps/data/{self.filename}.xml")
-        self.element_data = tree.getroot()
         container = self.element_data.find('.//container')
         
         # Search for the item in the data file & remove the value.
@@ -175,10 +205,8 @@ class Map:
                 break
         
         # Save the current session data into the corresponding data file.
-        tree.write(f"resources/maps/data/{self.filename}.xml")
-    
-    def get_objects(self):
-        ...
+        with open(f"resources/maps/data/{self.filename}.xml", 'wb') as file:
+            file.write(element.tostring(self.element_data))
     
     def render(self) -> None:
         """Renders the environment from the loaded tiles."""
@@ -187,6 +215,5 @@ class Map:
                 if not isinstance(tile, Tile):
                     continue
                 scale = self.game.settings.get_graphics()["SCALE"]
-                image = pygame.transform.scale(pygame.image.load(tile.texture), (SCALE, SCALE))
                 rect = pygame.Rect(x * SCALE, y * SCALE, scale**4, scale**4)
-                self.game.screen.blit(image, rect)
+                self.game.screen.blit(tile.texture, rect)

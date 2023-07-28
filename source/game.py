@@ -16,9 +16,6 @@ class Game:
     
     Attributes:
         maps (list[str | bytes]):           Contains all the map files for loading into areas.
-        map_containers (list[Container]):   Holds all containers loaded into the current area. -- *updates the list when a map file is loaded.*
-        map_doors (list[Door]):             Holds all doors loaded into the current area.
-        map_keys (list[KeyItem]):           Contains all `KeyItem` objects as they are added into the world -- *doesn't update on map change.*
         state (Enum):                       Defines the current game state (*i.e.* ``RUNNING``... *etc.*)
         settings (dict):                    All parsed settings values int topics --> {```dict[topic][_Kw]```}.
         graphics (dict):                    Specifically the graphical settings --> {```dict[_Kw]```}.
@@ -59,18 +56,25 @@ class Game:
     
     def set_state(self, state: int) -> None:
         """Sets the game state from a numerical value."""
-        if state == 0:
-            self.state = GameState.NONE
-        elif state == 1:
-            self.state = GameState.RUNNING
-        elif state == 2:
-            self.state = GameState.ENDED
-        elif state == 3:
-            self.state = GameState.GAME_OVER
-        elif state == 4:
-            self.state = GameState.SUSPENDED
-        elif state == 5:
-            self.state = GameState.OPEN_MENU
+        match state:
+            case 0:
+                self.state = GameState.NONE
+                return
+            case 1:
+                self.state = GameState.RUNNING
+                return
+            case 2:
+                self.state = GameState.ENDED
+                return
+            case 3:
+                self.state = GameState.GAME_OVER
+                return
+            case 4:
+                self.state = GameState.SUSPENDED
+                return
+            case 5:
+                self.state = GameState.OPEN_MENU
+                return
     
     def set_area(self, index: int) -> None:
         """Sets the current map file (***** check usage...)"""
@@ -153,6 +157,7 @@ class Game:
                             item = self.container.items.pop(self.selected_index)
                             self.player.inventory.items.append(item)
                             self.map.remove_object_data(item)
+                            self.selected_index -= 1
                     
                     if event.key == pygame.K_x:
                         for _ in self.container.items:

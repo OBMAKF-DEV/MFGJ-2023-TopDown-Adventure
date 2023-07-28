@@ -1,55 +1,43 @@
+import time
 import pygame
 import shutil
 from time import sleep
 from source.utils import *
 from source import Game, InteractionObject
-from source.const import GameState, ContainerState
-
+from source.const import GameState, ContainerState, rgb
 
 
 keys = [pygame.K_w, pygame.K_s, pygame.K_a, pygame.K_d]
-DATA_FILES = [
-    'test_map.xml',
-    'test_map2.xml'
-]
+DATA_FILES = ['test_map.xml', 'test_map2.xml']
 
-
-def background_task(task):
-    while True:
-        sleep(2)
-        task()
+PLAYER_SPEED = 2
+DELAY = 0.5
 
 def main():
     game = Game()
     game.state = GameState.RUNNING
     
     while game.state != GameState.ENDED:
-        game.clock.tick(game.graphics['FPS']/game.graphics['SCALE']*2)
+        game.screen.fill(rgb.BLACK)
+        #pygame.display.set_caption(str(game.clock.get_fps()))
+        game.clock.tick(game.graphics['FPS']/game.graphics['SCALE']*4)
         game.update()
-        
         if game.state == GameState.RUNNING:
-            while True:
-                if game.held_keys['w']:
-                    game.player.face(Directions.NORTH)
-                    game.player.move(north(game.player.position))
-                    break
+            if game.held_keys['w']:
+                game.player.face(Directions.NORTH)
+                game.player.move(north(game.player.position), None)
                 
-                if game.held_keys['a']:
-                    game.player.face(Directions.WEST)
-                    game.player.move(west(game.player.position))
-                    break
+            elif game.held_keys['a']:
+                game.player.face(Directions.WEST)
+                game.player.move(west(game.player.position), None)
                 
-                if game.held_keys['s']:
-                    game.player.face(Directions.SOUTH)
-                    game.player.move(south(game.player.position))
-                    break
+            elif game.held_keys['s']:
+                game.player.face(Directions.SOUTH)
+                game.player.move(south(game.player.position), None)
                 
-                if game.held_keys['d']:
-                    game.player.face(Directions.EAST)
-                    game.player.move(east(game.player.position))
-                    break
-                
-                break
+            elif game.held_keys['d']:
+                game.player.face(Directions.EAST)
+                game.player.move(east(game.player.position), None)
             
         pygame.display.flip()
     # Reset the data files to their default values.
