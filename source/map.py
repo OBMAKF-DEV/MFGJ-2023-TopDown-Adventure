@@ -130,21 +130,17 @@ class Map:
                             case '-':
                                 tile = MapTiles.FLOOR
                             case '+':
-                                #items = [Item(**item) for item in self.containers[(x, y)]['items']]
-                                #key = KeyItem('key', None, self.game.map_doors[0])
-                                #items.append(key)
-                                #self.game.map_keys.append(key)
-                                #container = Container(self.game, items)
                                 for _data in self.containers:
                                     items = []
                                     if _data['x'] == x and _data['y'] == y:
                                         coords: tuple[int, int] = _data['x'], _data['y']
                                         items: list[KeyItem | Item] = _data['items']
+                                
                                 container = Container(self.game, items)
                                 tile = Tile(
                                     'resources/img/tiles/crate.png',
                                     False, True,container)
-                                self.game.map_containers.append(container)
+                                #self.game.map_containers.append(container)
                             case '>':
                                 for _data in self.doors:
                                     if _data['x'] == x and _data['y'] == y:
@@ -152,6 +148,7 @@ class Map:
                                         key = _data['key'] if _data['key'] != 'None' else None
                                         destination = _data['destination']
                                         spawn = _data['spawn']['x'], _data['spawn']['y']
+                                
                                 door = Door(self.game, self.filename, (x, y), destination, spawn, key, lock_state)
                                 tile = Tile(
                                     'resources/img/tiles/door.png', False, True, door)
@@ -160,12 +157,25 @@ class Map:
                     self.tiles.append(row)
                 self.current_map = map_file
             self.current_file = f"resources/maps/{filename}.txt"
+        
         except FileNotFoundError as exc:
             raise FileNotFoundError(exc) from exc
         return self.get_objects()
     
-    def update_objects(self, container: Container = None):  # todo... update values in the XML file.
-        ...
+    def remove_object_data(self, item: Item | KeyItem):
+        """Removes the session XML data values containing an object."""
+        tree = element.parse(f"resources/maps/data/{self.filename}.xml")
+        self.element_data = tree.getroot()
+        container = self.element_data.find('.//container')
+        
+        # Search for the item in the data file & remove the value.
+        for _item in container.findall('.//object'):
+            if _item.attrib.get('name') == item.name:
+                container.find('.//items').remove(_item)
+                break
+        
+        # Save the current session data into the corresponding data file.
+        tree.write(f"resources/maps/data/{self.filename}.xml")
     
     def get_objects(self):
         ...

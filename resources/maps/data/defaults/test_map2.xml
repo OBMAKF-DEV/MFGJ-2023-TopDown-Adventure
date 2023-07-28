@@ -1,0 +1,16 @@
+<!-- test_map2.xml -->
+<world>
+    <objects>
+        <!-- Containers -->
+
+        <!-- Doors -->
+        <doors>
+            <door x="0" y="1" state="unlocked" key="test_key">
+                <destination>
+                    <location>test_map</location>
+                    <spawn x="54" y="14"/>
+                </destination>
+            </door>
+        </doors>
+    </objects>
+</world>

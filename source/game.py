@@ -150,12 +150,15 @@ class Game:
                     
                     if event.key == pygame.K_RETURN:
                         if len(self.container.items) > 0:
-                            self.player.inventory.items.append(
-                                self.container.items.pop(self.selected_index))
+                            item = self.container.items.pop(self.selected_index)
+                            self.player.inventory.items.append(item)
+                            self.map.remove_object_data(item)
                     
                     if event.key == pygame.K_x:
                         for _ in self.container.items:
-                            self.player.inventory.items.append(self.container.items.pop())
+                            item = self.container.items.pop()
+                            self.player.inventory.items.append(item)
+                            self.map.remove_object_data(item)
                         self.container.state = ContainerState.CLOSED
                         self.state = GameState.RUNNING
                     
