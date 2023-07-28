@@ -22,18 +22,21 @@ def main():
         game.update()
         
         if game.state == GameState.RUNNING:
-            posx, posy = game.player.position
             while True:
                 if game.held_keys['w']:
+                    game.player.face(Directions.NORTH)
                     game.player.move(north(game.player.position))
                     break
                 if game.held_keys['a']:
+                    game.player.face(Directions.WEST)
                     game.player.move(west(game.player.position))
                     break
                 if game.held_keys['s']:
+                    game.player.face(Directions.SOUTH)
                     game.player.move(south(game.player.position))
                     break
                 if game.held_keys['d']:
+                    game.player.face(Directions.EAST)
                     game.player.move(east(game.player.position))
                     break
                 break

@@ -4,7 +4,7 @@ from typing import Any
 from source.map import Map
 from source.player import Player
 from source.utils import *
-from source.const import GameState, ContainerState
+from source.const import GameState, ContainerState, rgb
 from source.container import Container
 import pygame
 import multiprocessing
@@ -45,14 +45,14 @@ class Game:
         self.fonts = {'MENU': pygame.font.Font(None, 24)}
         self.settings = Settings(self)
         self.graphics = self.settings.get_graphics()
-        self.geometry: tuple[int, int] = (int(self.graphics['Width']), int(self.graphics['Height']))
-        
-        #self.screen = pygame.display.set_mode(self.geometry)
+        self.geometry: tuple[int, int] = (
+            int(self.graphics['Width']), int(self.graphics['Height']))
         self.screen = pygame.display.set_mode(pygame.display.get_desktop_sizes()[0])
         self.clock = pygame.time.Clock()
         
         self.player = Player(self)
         self.map = Map(self)
+        
         self.state = GameState.RUNNING
         
         self.set_area(0)
@@ -90,7 +90,7 @@ class Game:
     
     def update(self) -> None:
         """Updates the current events and visual properties."""
-        self.screen.fill((0, 0, 0))
+        self.screen.fill(rgb.BLACK)
         self.handle_events()
         self.render()
     
@@ -171,13 +171,13 @@ class Game:
     
     def render_menu(self):
         header = pygame.surface.Surface((110, 225))
-        header.fill((50, 50, 50))
+        header.fill(rgb.CHARCOAL)
         header.blit(self.fonts['MENU'].render(
-            str(self.container).center(20), True, (255, 255, 0)), (5, 5))
+            str(self.container).center(20), True, rgb.YELLOW), (5, 5))
         menu = pygame.surface.Surface((100, 200))
-        menu.fill((255, 255, 255))
+        menu.fill(rgb.WHITE)
         for i, item in enumerate(self.container.items):
-            color = (255, 0, 0) if i == self.selected_index else (0, 0, 0)
+            color = rgb.RED if i == self.selected_index else rgb.BLACK
             text = self.fonts['MENU'].render(item.name, True, color)
             menu.blit(text, (0, i * 25))
         scale = self.graphics["SCALE"]
