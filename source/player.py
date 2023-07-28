@@ -24,7 +24,7 @@ class Player(Entity):
     inventory: Inventory
     
     def __init__(
-            self, game, position: tuple[int, int] = (1, 1),
+            self, game, position: tuple[int, int] = (5, 6),
             health: int = 100, max_health: int = 100, damage: int = 5) -> None:
         super(Player, self).__init__(health, max_health, damage)
         self.state = EntityState.ALIVE
@@ -44,9 +44,13 @@ class Player(Entity):
             Directions.WEST: 'resources/img/player_L.png',
             Directions.EAST: 'resources/img/player_R.png'
         }
-
-        image = pygame.transform.scale(pygame.image.load(icon[self.facing_direction]), (SCALE, SCALE))
-        rect = pygame.rect.Rect(self.position[0] * SCALE, self.position[1] * SCALE, SCALE, SCALE)
+        scale = self.game.graphics['SCALE']
+        image = pygame.transform.scale(pygame.image.load(icon[self.facing_direction]), (scale*4, scale*4))
+        rect = pygame.rect.Rect(
+            self.position[0] * scale - (scale * 2),
+            self.position[1] * scale - (scale * 3),
+            scale**4,
+            scale**4)
         self.game.screen.blit(image, rect)
     
     def face(self, direction):
@@ -55,7 +59,7 @@ class Player(Entity):
     
     def move(self, position):
         x, y = position
-        asset = self.game.map.tiles[y][x]
+        asset = self.game.map.tiles[y//4][x//4]
         if isinstance(asset, Tile):
             if asset.is_passable:
                 self.position = position
@@ -70,7 +74,7 @@ class Player(Entity):
         else:
             x, y = east(self.position)
         
-        tile = self.game.map.tiles[y][x]
+        tile = self.game.map.tiles[y//4][x//4]
         if isinstance(tile, Tile):
             if tile.object is not None and tile.can_interact:
                 return tile.object.interact()

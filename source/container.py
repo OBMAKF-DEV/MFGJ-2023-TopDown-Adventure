@@ -1,19 +1,14 @@
 import pygame.rect
-
+from source.const import GameState, ContainerState
 from source.items import Item, InteractionObject
 import tkinter as tk
 import tkinter.ttk as ttk
 from enum import Enum
 
 
-class ContainerStates(Enum):
-    CLOSED = 0
-    OPEN = 1
-
-
 class Container(InteractionObject):
     items = []
-    state = ContainerStates.CLOSED
+    state = ContainerState.CLOSED
     
     def __init__(self, game, items: list[Item] | None):
         self.game = game
@@ -22,25 +17,30 @@ class Container(InteractionObject):
             self.items = [item for item in items]
     
     def interact(self):
-        if self.state == ContainerStates.CLOSED:
+        if self.state == ContainerState.CLOSED:
             return self.open()
     
     def open(self):
-        if self.state == ContainerStates.OPEN:
+        if self.state == ContainerState.OPEN:
             return
-        self.state = ContainerStates.OPEN
+        self.state = ContainerState.OPEN
+        self.game.open_container(self)
     
     def close(self):
-        if self.state == ContainerStates.CLOSED:
+        if self.state == ContainerState.CLOSED:
             return
-        self.state = ContainerStates.CLOSED
+        self.state = ContainerState.CLOSED
+        self.game.close_container(self)
         print('closed')
     
     def draw(self):
-        if self.state == ContainerStates.OPEN:
+        if self.state == ContainerState.OPEN:
             font = pygame.font.Font(None, 18)
             title = pygame.font.Font(None, 25)
-            self.game.screen.fill((255, 255, 255))
+            #self.game.screen.fill((255, 255, 255))
+            rect = pygame.rect.Rect(0, 0, 40, 100)
+            surface = pygame.surface.Surface(rect)
+            
             self.game.screen.blit(title.render(str(self), True, (0, 0, 0)), (150, 10))
             for i, item in enumerate(self.items):
                 self.game.screen.blit(font.render(item.name, True, (0, 0, 0)), (0, (i * 10) + 20))

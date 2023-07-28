@@ -16,7 +16,7 @@
             <door x="14" y="3" state="locked" key="test_key">
                 <destination>
                     <location>test_map2</location>
-                    <spawn x="1" y="1"/>
+                    <spawn x="4" y="6"/>
                 </destination>
             </door>
         </doors>

@@ -7,6 +7,7 @@ class GameState(Enum):
     ENDED = 2
     GAME_OVER = 3
     SUSPENDED = 4
+    OPEN_MENU = 5
 
 
 class ContainerState(Enum):

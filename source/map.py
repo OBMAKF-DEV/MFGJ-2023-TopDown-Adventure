@@ -176,6 +176,7 @@ class Map:
             for x, tile in enumerate(row):
                 if not isinstance(tile, Tile):
                     continue
+                scale = self.game.settings.get_graphics()["SCALE"]
                 image = pygame.transform.scale(pygame.image.load(tile.texture), (SCALE, SCALE))
-                rect = pygame.Rect(x * SCALE, y * SCALE, SCALE, SCALE)
+                rect = pygame.Rect(x * SCALE, y * SCALE, scale**4, scale**4)
                 self.game.screen.blit(image, rect)
