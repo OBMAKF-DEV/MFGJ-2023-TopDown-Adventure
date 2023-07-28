@@ -60,7 +60,7 @@ class Player(Entity):
         if direction in Directions:
             self.facing_direction = direction
     
-    def move(self, position, dt):
+    def move(self, position):
         x, y = position
         asset = self.game.map.tiles[y//4][x//4]
         

@@ -137,7 +137,7 @@ class Map:
                 for y, line in enumerate(map_file.readlines()):
                     row = []
                     for x, char in enumerate(line.strip()):
-                        tile: Tile | None = None
+                        tile: Tile | tuple | None = None
                         match char:
                             case '#':
                                 tile = MapTiles.BACK_WALL
@@ -156,6 +156,12 @@ class Map:
                             
                             case '-':
                                 tile = MapTiles.TILES
+                            
+                            case '%':
+                                tile = (MapTiles.GRASS, MapTiles.RIGHT_WALL)
+                            
+                            case '^':
+                                tile = MapTiles.GRASS
                             
                             case '+':
                                 for _data in self.containers:
@@ -210,10 +216,14 @@ class Map:
     
     def render(self) -> None:
         """Renders the environment from the loaded tiles."""
+        scale = self.game.settings.get_graphics()["SCALE"]
         for y, row in enumerate(self.tiles):
             for x, tile in enumerate(row):
                 if not isinstance(tile, Tile):
+                    if isinstance(tile, tuple):
+                        _rect = pygame.Rect(x * SCALE, y * SCALE, scale**4, scale**4)
+                        self.game.screen.blit(tile[0].texture, _rect)
+                        self.game.screen.blit(tile[1].texture, _rect)
                     continue
-                scale = self.game.settings.get_graphics()["SCALE"]
                 rect = pygame.Rect(x * SCALE, y * SCALE, scale**4, scale**4)
                 self.game.screen.blit(tile.texture, rect)
