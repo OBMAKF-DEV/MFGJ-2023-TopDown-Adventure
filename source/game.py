@@ -150,7 +150,8 @@ class Game:
                     
                     if event.key == pygame.K_RETURN:
                         if len(self.container.items) > 0:
-                            self.player.inventory.items.append(self.container.items.pop(self.selected_index))
+                            self.player.inventory.items.append(
+                                self.container.items.pop(self.selected_index))
                     
                     if event.key == pygame.K_x:
                         for _ in self.container.items:
@@ -161,7 +162,7 @@ class Game:
                     if event.key == pygame.K_ESCAPE:
                         self.container.close()
                     
-                    if self.container.__str__() == "Container":
+                    if self.container.__str__() == "Chest":
                         if event.key == pygame.K_f:
                             self.container.close()
                     elif self.container.__str__() == "Inventory":
@@ -171,7 +172,8 @@ class Game:
     def render_menu(self):
         header = pygame.surface.Surface((110, 225))
         header.fill((50, 50, 50))
-        header.blit(self.fonts['MENU'].render(str(self.container), True, (255, 255, 0)), (5, 5))
+        header.blit(self.fonts['MENU'].render(
+            str(self.container).center(20), True, (255, 255, 0)), (5, 5))
         menu = pygame.surface.Surface((100, 200))
         menu.fill((255, 255, 255))
         for i, item in enumerate(self.container.items):
