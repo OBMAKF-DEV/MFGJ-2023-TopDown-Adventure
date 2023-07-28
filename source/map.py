@@ -4,7 +4,11 @@ from source.container import Container, InteractionObject, Item
 from source.door import Door, OBJECTS, KeyItem
 from enum import Enum
 from typing import TextIO
+
+import xml.etree.ElementTree as element
 import pygame
+
+OBJECTS = OBJECTS
 
 
 class Tile:
@@ -56,37 +60,66 @@ class Map:
         objects (list[object]): List containing objects to be rendered in.
         game (Game): The main game object.
     """
+    filename: str
     tiles: list[list[Tile]] = []
     current_map: TextIO = None
     current_file: str | bytes = None
     objects: list[object]
-    doors: dict[tuple[int, int], Door]
-    containers: dict[tuple[int, int], dict]
+    doors: list
+    containers: list[dict]
     
     def __init__(self, game) -> None:
         self.game = game
+        self.element_data = None
     
-    def load(self, file: str | bytes) -> None:
+    def load(self, filename: str) -> None:
         """Loads the `current_map` from a map file.
         
         Args:
-            file (str | bytes): The file to read and load the map from.
+            filename (str | bytes): The name of the files to read and load the map from.
         
         Raises:
             FileNotFoundError: If the file cant be found.
         """
-        self.game.map_doors = []
+        self.filename = filename
+
+        self.containers = []
+        self.doors = []
+        
+        tree = element.parse(f"resources/maps/data/{filename}.xml")
+        
+        self.element_data = tree.getroot()
+        
+        for data in self.element_data.findall('.//container'):
+            container = dict()
+            container['x'] = int(data.attrib['x'])
+            container['y'] = int(data.attrib['y'])
+            container['items'] = []
+            for item_data in data.findall('.//object'):
+                item = dict()
+                item['name'] = item_data.attrib['name']
+                item['image'] = item_data.attrib['image'] if \
+                    item_data.attrib['image'] != 'None' else None
+                if item_data.attrib['type'] == 'Item':
+                    container['items'].append(Item(item['name'], item['image']))
+                    continue
+                container['items'].append(KeyItem(item['name'], item['image'], None))
+            self.containers.append(container)
+        
+        for data in self.element_data.findall('.//door'):
+            door = dict()
+            door['x'] = int(data.attrib['x'])
+            door['y'] = int(data.attrib['y'])
+            door['state'] = data.attrib['state']
+            door['key'] = data.attrib['key']
+            door['destination'] = data.find('.//location').text
+            door['spawn'] = dict()
+            door['spawn']['x'] = int(data.find('.//spawn').attrib['x'])
+            door['spawn']['y'] = int(data.find('.//spawn').attrib['y'])
+            self.doors.append(door)
+        
         try:
-            self.doors = OBJECTS[file]['doors']
-        except KeyError:
-            self.doors = {}
-        self.game.map_containers = []
-        try:
-            self.containers = OBJECTS[file]['containers']
-        except KeyError:
-            self.containers = {}
-        try:
-            with open(file, 'r', encoding='utf-8') as map_file:
+            with open(f"resources/maps/{filename}.txt", 'r', encoding='utf-8') as map_file:
                 for y, line in enumerate(map_file.readlines()):
                     row = []
                     for x, char in enumerate(line.strip()):
@@ -97,27 +130,42 @@ class Map:
                             case '-':
                                 tile = MapTiles.FLOOR
                             case '+':
-                                items = [Item(**item) for item in self.containers[(x, y)]['items']]
-                                key = KeyItem('key', None, self.game.map_doors[0])
-                                items.append(key)
-                                self.game.map_keys.append(key)
+                                #items = [Item(**item) for item in self.containers[(x, y)]['items']]
+                                #key = KeyItem('key', None, self.game.map_doors[0])
+                                #items.append(key)
+                                #self.game.map_keys.append(key)
+                                #container = Container(self.game, items)
+                                for _data in self.containers:
+                                    items = []
+                                    if _data['x'] == x and _data['y'] == y:
+                                        coords: tuple[int, int] = _data['x'], _data['y']
+                                        items: list[KeyItem | Item] = _data['items']
                                 container = Container(self.game, items)
                                 tile = Tile(
-                                    'resources/img/tiles/crate.png', False, True,
-                                    container)
+                                    'resources/img/tiles/crate.png',
+                                    False, True,container)
                                 self.game.map_containers.append(container)
                             case '>':
-                                door = Door(self.game, **self.doors[(x, y)][0])
+                                for _data in self.doors:
+                                    if _data['x'] == x and _data['y'] == y:
+                                        lock_state = True if _data['state'] == 'locked' else False
+                                        key = _data['key'] if _data['key'] != 'None' else None
+                                        destination = _data['destination']
+                                        spawn = _data['spawn']['x'], _data['spawn']['y']
+                                door = Door(self.game, self.filename, (x, y), destination, spawn, key, lock_state)
                                 tile = Tile(
                                     'resources/img/tiles/door.png', False, True, door)
                                 self.game.map_doors.append(door)
                         row.append(tile)
                     self.tiles.append(row)
                 self.current_map = map_file
-            self.current_file = file
+            self.current_file = f"resources/maps/{filename}.txt"
         except FileNotFoundError as exc:
             raise FileNotFoundError(exc) from exc
         return self.get_objects()
+    
+    def update_objects(self, container: Container = None):  # todo... update values in the XML file.
+        ...
     
     def get_objects(self):
         ...

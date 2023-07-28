@@ -26,7 +26,7 @@ class Game:
         player (Player):                    The main player object.
         map (Map):                          Contains methods for loading map files and rending the environment.
     """
-    maps: list[str | bytes] = ['resources/maps/test_map.txt', 'resources/maps/test_map2.txt']
+    maps: list[str] = ['test_map', 'test_map2']
     map_containers = []
     map_doors = []
     map_keys = []
@@ -40,7 +40,8 @@ class Game:
         self.graphics = self.settings.get_graphics()
         self.geometry: tuple[int, int] = (int(self.graphics['Width']), int(self.graphics['Height']))
         
-        self.screen = pygame.display.set_mode(self.geometry)
+        #self.screen = pygame.display.set_mode(self.geometry)
+        self.screen = pygame.display.set_mode(pygame.display.get_desktop_sizes()[0])
         self.clock = pygame.time.Clock()
         
         self.player = Player(self)

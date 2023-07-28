@@ -62,6 +62,7 @@ class Container(InteractionObject):
     def take_all(self):
         for item in self.items:
             self.game.player.inventory.items.append(item)
+        self.game.map.update_objects(self)
         self.items = []
         self.close()
     
