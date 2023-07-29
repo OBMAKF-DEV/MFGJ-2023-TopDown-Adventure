@@ -43,10 +43,11 @@ class Player(Entity):
     def render(self) -> None:
         """Render in the players icon."""
         scale = self.game.graphics['SCALE']
+        
         # Create a surface for displaying icon.
         rect = pygame.rect.Rect(
-            self.position[0] * scale - (scale * 2),
-            self.position[1] * scale - (scale * 3),
+            self.position[0] * scale - (scale * 2) + 100,
+            self.position[1] * scale - (scale * 3) + 100,
             scale ** 4, scale ** 4)
         
         # Load and transform, the player icon.
@@ -57,6 +58,7 @@ class Player(Entity):
         self.game.screen.blit(icon, rect)
     
     def face(self, direction):
+        """Sets the direction that the player is facing."""
         if direction in Directions:
             self.facing_direction = direction
     

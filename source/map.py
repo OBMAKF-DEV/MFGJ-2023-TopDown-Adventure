@@ -221,9 +221,9 @@ class Map:
             for x, tile in enumerate(row):
                 if not isinstance(tile, Tile):
                     if isinstance(tile, tuple):
-                        _rect = pygame.Rect(x * SCALE, y * SCALE, scale**4, scale**4)
+                        _rect = pygame.Rect(x * SCALE + 100, y * SCALE + 100, scale**4, scale**4)
                         self.game.screen.blit(tile[0].texture, _rect)
                         self.game.screen.blit(tile[1].texture, _rect)
                     continue
-                rect = pygame.Rect(x * SCALE, y * SCALE, scale**4, scale**4)
+                rect = pygame.Rect(x * SCALE + 100, y * SCALE  + 100, scale**4, scale**4)
                 self.game.screen.blit(tile.texture, rect)

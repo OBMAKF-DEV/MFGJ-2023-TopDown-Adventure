@@ -3,6 +3,7 @@
 from typing import Any
 from source.map import Map
 from source.player import Player
+from source.main_menu import MainMenu
 from source.utils import *
 from source.const import GameState, ContainerState, rgb
 from source.container import Container
@@ -12,7 +13,7 @@ from pygame import Surface
 
 
 class Game:
-    """Base game class giving the user accessability to interact with the game.
+    """Base game class giving the user accessibility to interact with the game.
     
     Attributes:
         maps (list[str | bytes]):           Contains all the map files for loading into areas.
@@ -27,7 +28,7 @@ class Game:
     """
     held_keys: dict[str, bool] = {'w': False, 'a': False, 's': False, 'd': False}
     process = None
-    selected_index: int | None
+    selected_index: int | None = 0
     container: Container | None
     
     maps: list[str] = ['test_map', 'test_map2']
@@ -39,18 +40,21 @@ class Game:
     def __init__(self) -> None:
         """Initializes the `Game` class."""
         pygame.init()
-        self.fonts = {'MENU': pygame.font.Font(None, 24)}
+        self.fonts = {'MENU': pygame.font.Font(None, 24), 'MAIN_MENU': pygame.font.Font(None, 50)}
         self.settings = Settings(self)
         self.graphics = self.settings.get_graphics()
         self.geometry: tuple[int, int] = (
-            int(self.graphics['Width']), int(self.graphics['Height']))
+            int(self.graphics['Width']),
+            int(self.graphics['Height'])
+        )
         self.screen = pygame.display.set_mode(pygame.display.get_desktop_sizes()[0])
         self.clock = pygame.time.Clock()
         
         self.player = Player(self)
         self.map = Map(self)
+        self.main_menu = MainMenu(self)
         
-        self.state = GameState.RUNNING
+        self.state = GameState.MAIN_MENU
         
         self.set_area(0)
     
@@ -89,12 +93,15 @@ class Game:
         """Groups together rendering methods to be called from the main event loop."""
         self.map.render()
         self.player.render()
-        if self.state == GameState.OPEN_MENU:
+        if self.state == GameState.OPEN_MENU or self.state == GameState.MAIN_MENU:
             self.render_menu()
     
     def update(self) -> None:
         """Updates the current events and visual properties."""
         self.screen.fill(rgb.BLACK)
+        if self.state == GameState.RUNNING:
+            self.main_menu.options[0] = "Continue"
+            self.main_menu.options[1] = "Save Game"
         self.handle_events()
         self.render()
     
@@ -110,6 +117,7 @@ class Game:
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
                 self.state = GameState.ENDED
+                
             if self.state == GameState.RUNNING:
                 if event.type == pygame.KEYUP:
                     match event.key:
@@ -125,7 +133,7 @@ class Game:
                 elif event.type == pygame.KEYDOWN:
                     match event.key:
                         case pygame.K_ESCAPE:
-                            self.state = GameState.ENDED
+                            self.state = GameState.MAIN_MENU
                         case pygame.K_w | pygame.K_UP:
                             self.held_keys['w'] = True
                             self.player.face(Directions.NORTH)
@@ -176,23 +184,51 @@ class Game:
                     elif self.container.__str__() == "Inventory":
                         if event.key == pygame.K_i:
                             self.container.close()
+            
+            elif self.state == GameState.MAIN_MENU:
+                if event.type == pygame.KEYDOWN:
+                    if event.key == pygame.K_DOWN or \
+                            event.key == pygame.K_s:
+                        if self.selected_index >= len(self.main_menu.options)-1:
+                            continue
+                        self.selected_index += 1
+                    
+                    if event.key == pygame.K_UP or \
+                            event.key == pygame.K_d:
+                        if self.selected_index <= 0:
+                            continue
+                        self.selected_index -= 1
+                    
+                    if event.key == pygame.K_RETURN:
+                        self.main_menu.commands[self.selected_index]()
+                        self.main_menu.close()
     
     def render_menu(self):
-        header = pygame.surface.Surface((110, 225))
-        header.fill(rgb.CHARCOAL)
-        header.blit(self.fonts['MENU'].render(
-            str(self.container).center(20), True, rgb.YELLOW), (5, 5))
-        menu = pygame.surface.Surface((100, 200))
-        menu.fill(rgb.WHITE)
-        for i, item in enumerate(self.container.items):
-            color = rgb.RED if i == self.selected_index else rgb.BLACK
-            text = self.fonts['MENU'].render(item.name, True, color)
-            menu.blit(text, (0, i * 25))
         scale = self.graphics["SCALE"]
-        header.blit(menu, (5, 20))
-        self.screen.blit(header, (
-            (self.player.position[0] + 2) * scale,
-            self.player.position[1] * scale))  #350, 200))
+        
+        if self.state == GameState.OPEN_MENU:
+            header = pygame.surface.Surface((110, 225))
+            header.fill(rgb.CHARCOAL)
+            header.blit(self.fonts['MENU'].render(str(self.container).center(20), True, rgb.YELLOW), (5, 5))
+            
+            menu = pygame.surface.Surface((100, 200))
+            menu.fill(rgb.WHITE)
+            
+            for i, item in enumerate(self.container.items):
+                color = rgb.RED if i == self.selected_index else rgb.BLACK
+                text = self.fonts['MENU'].render(item.name, True, color)
+                menu.blit(text, (0, i * 25))
+            header.blit(menu, (5, 20))
+            
+            self.screen.blit(header, ((self.player.position[0] + 2) * scale, self.player.position[1] * scale))
+        
+        elif self.state == GameState.MAIN_MENU:
+            self.screen.fill(rgb.CHARCOAL)
+            screen_width, screen_height = pygame.display.get_window_size()
+            for i, item in enumerate(self.main_menu.options):
+                color = rgb.YELLOW if i == self.selected_index else rgb.GRAY
+                self.screen.blit(self.fonts['MAIN_MENU'].render(item, True, color), (0, i * 30))
+            
         pygame.display.flip()
     
     def open_container(self, container):

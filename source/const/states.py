@@ -8,6 +8,7 @@ class GameState(Enum):
     GAME_OVER = 3
     SUSPENDED = 4
     OPEN_MENU = 5
+    MAIN_MENU = 6
 
 
 class ContainerState(Enum):
@@ -23,3 +24,8 @@ class EntityState(Enum):
 class DoorState(Enum):
     LOCKED = 0
     UNLOCKED = 1
+
+
+class MenuState(Enum):
+    CLOSED = 0
+    OPENED = 1

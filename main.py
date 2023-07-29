@@ -12,7 +12,7 @@ DATA_FILES = ['test_map.xml', 'test_map2.xml']
 def main():
     """The main looping function."""
     game = Game()
-    game.state = GameState.RUNNING
+    game.state = GameState.MAIN_MENU
     
     while game.state != GameState.ENDED:
         
