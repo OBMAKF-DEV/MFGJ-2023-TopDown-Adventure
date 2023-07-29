@@ -13,4 +13,13 @@
             </door>
         </doors>
     </objects>
+    <npcs>
+        <npc type="StoryNPC" name="bot" friendly="True" dialog="0" line="0"
+            health="100" max_health="100" damage="0">
+            <position x="80" y="30"/>
+            <speech_scripts>
+                <script file="test_quest1"/>
+            </speech_scripts>
+        </npc>
+    </npcs>
 </world>

@@ -16,12 +16,15 @@ class NPC(Entity):
     """
     state = EntityState.ALIVE
 
-    def __init__(self, game, name: str, image: str | bytes, friendly: bool, health: int = 100, max_health: int = 100, damage: int = 0) -> None:
+    def __init__(
+            self, game, name: str, image: str | bytes, friendly: bool, position: tuple[int, int],
+            health: int = 100, max_health: int = 100, damage: int = 0) -> None:
         super().__init__(health, max_health, damage)
         self.game = game
         self.name = name
         self.image = image
         self.is_friendly = friendly
+        self.position = position
     
     def on_death(self) -> None:
         self.state = EntityState.DEAD
@@ -29,9 +32,21 @@ class NPC(Entity):
 
 class StoryNPC(NPC):
     """An NPC class that gives it functionality for prompting dialog upon interaction."""
-    def __init__(self, game, name: str, image: str | bytes, dialog: list[str], health: int = 100, max_health: int = 100, damage: int = 0) -> None:
-        super().__init__(game, name, image, True, health, max_health, damage)
-        self.dialog = dialog
+    def __init__(
+            self, game, name: str, friendly: bool, image: str | bytes,
+            scripts: list[str | bytes], position: tuple[int, int], dialog: int = 0, line: int = 0,
+            health: int = 100, max_health: int = 100,
+            damage: int = 0) -> None:
+        super().__init__(game, name, image, friendly, position, health, max_health, damage)
+        self.scripts = scripts
+        self.dialog_index = dialog
+        self.current_script = scripts[dialog]
+        self.line = line
+    
+    def get_speech(self) -> str:
+        with open(f"resources/npc/dialog/{self.scripts[self.dialog_index]}.txt") as script:
+            _speech = script.readlines()[self.line + 1]
+            return _speech
     
     def interact(self):
         """Gives the player a way of being able to interact with the NPC."""
