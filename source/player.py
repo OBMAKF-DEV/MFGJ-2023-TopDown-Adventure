@@ -1,9 +1,10 @@
 from source.const import SCALE, PLAYER_ICONS
+from source.const.icons import TOPBAR_ICONS
 from source.utils.directions import *
 from source.map import Tile
 from source.items import Item
 from source.items import InteractionObject
-from source.const import GameState, EntityState
+from source.const import GameState, EntityState, rgb
 from source.entity import Entity
 from source.container import Container
 import pygame
@@ -40,13 +41,33 @@ class Player(Entity):
         self.state = EntityState.DEAD
         self.game.state = GameState.GAME_OVER
     
+    def render_topbar(self) -> None:
+        width, height = pygame.display.get_desktop_sizes()[0]
+        bar = pygame.Surface((width, 80))
+        bar.fill(rgb.GRAY)
+        self.game.screen.blit(bar, (0, 0))
+        
+        health_display = pygame.Surface((350, 60))
+        health_display.fill(rgb.GRAY)
+        hp = self.game.fonts['HEALTH'].render(f"HP: {self.health} / {self.max_health}", 0, rgb.BLACK)
+        health_display.blit(hp, (170, 30))
+        
+        heart = pygame.transform.scale(pygame.image.load(TOPBAR_ICONS['FULL_HEART']), (30, 30))
+        
+        match self.health:
+            case 100:
+                for i in range(5):
+                    health_display.blit(heart, (30*i+10, 20))
+        self.game.screen.blit(health_display, (10, 10))
+    
     def render(self) -> None:
         """Render in the players icon."""
         scale = self.game.graphics['SCALE']
+        self.render_topbar()
         
         # Create a surface for displaying icon.
         rect = pygame.rect.Rect(
-            self.position[0] * scale - (scale * 2) + 100,
+            self.position[0] * scale - (scale * 2),
             self.position[1] * scale - (scale * 3) + 100,
             scale ** 4, scale ** 4)
         
@@ -84,3 +105,10 @@ class Player(Entity):
         if isinstance(tile, Tile):
             if tile.object is not None and tile.can_interact:
                 return tile.object.interact()
+        elif isinstance(tile, tuple):
+            if isinstance(tile[0], Tile):
+                if tile[0].object is not None and tile[0].can_interact:
+                    return tile[0].object.interact()
+            elif isinstance(tile[1], Tile):
+                if tile[1].object is not None and tile[1].can_interact:
+                    return tile[1].object.interact()

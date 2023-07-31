@@ -21,7 +21,9 @@ def main():
         game.update()
         
         if game.state == GameState.RUNNING:
-            pygame.display.set_caption(f"{game.clock.get_fps()} FPS")
+            #pygame.display.set_caption(f"{game.clock.get_fps()} FPS")
+            pygame.display.set_caption(f"{game.player.position[0] // 4}, {game.player.position[1] // 4}")
+            
             if game.held_keys['w']:
                 game.player.face(Directions.NORTH)
                 game.player.move(north(game.player.position))

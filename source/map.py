@@ -48,11 +48,14 @@ class MapTiles:
     FRONT_RIGHT_WALL = Tile(TILE_ICONS['FRONT_RIGHT_WALL'], False, False, None)
     FRONT_LEFT_WALL = Tile(TILE_ICONS['FRONT_LEFT_WALL'], False, False, None)
     RIGHT_WALL = Tile(TILE_ICONS['RIGHT_WALL'], False, False, None)
+    BACK_ROOFTOP = Tile(TILE_ICONS['BACK_ROOFTOP'], False, False, None)
     LEFT_WALL = Tile(TILE_ICONS['LEFT_WALL'], False, False, None)
     BACK_WALL = Tile(TILE_ICONS['BACK_WALL'], False, False, None)
+    ROOFTOP = Tile(TILE_ICONS['ROOFTOP'], False, False, None)
     WALL = Tile(TILE_ICONS['WALL'], False, False, None)
     GRASS = Tile(TILE_ICONS['GRASS'], True, False, None)
     TILES = Tile(TILE_ICONS['TILES'], True, False, None)
+    PATH_H = Tile(TILE_ICONS['PATH_H'], True, False, None)
 
 
 class Map:
@@ -160,8 +163,29 @@ class Map:
                             case '%':
                                 tile = (MapTiles.GRASS, MapTiles.RIGHT_WALL)
                             
+                            case '&':
+                                tile = (MapTiles.GRASS, MapTiles.LEFT_WALL)
+                            
+                            case '$':
+                                tile = (MapTiles.BACK_WALL, MapTiles.LEFT_WALL)
+                            
+                            case ')':
+                                tile = (MapTiles.GRASS, MapTiles.FRONT_RIGHT_WALL)
+                            
+                            case '(':
+                                tile = (MapTiles.GRASS, MapTiles.FRONT_LEFT_WALL)
+                            
                             case '^':
                                 tile = MapTiles.GRASS
+                            
+                            case 'r':
+                                tile = MapTiles.ROOFTOP
+                            
+                            case 'p':
+                                tile = MapTiles.PATH_H
+                            
+                            case 'R':
+                                tile = MapTiles.BACK_ROOFTOP
                             
                             case '+':
                                 for _data in self.containers:
@@ -192,6 +216,25 @@ class Map:
                                 finally:
                                     door = Door(self.game, self.filename, (x, y), destination, spawn, key, lock_state)
                                     tile = Tile(image, False, True, door)
+                            
+                            case '@':
+                                key = None
+                                for _data in self.doors:
+                                    if _data['x'] == x and _data['y'] == y:
+                                        lock_state = True if _data['state'] == 'locked' else False
+                                        key = _data['key'] if _data['key'] != 'None' else None
+                                        destination = _data['destination']
+                                        spawn = _data['spawn']['x'], _data['spawn']['y']
+                                image = TILE_ICONS['LEFT_DOOR']
+                                try:
+                                    _check = line.strip()[y][x-1]
+                                    if _check != '?':
+                                        image = TILE_ICONS['RIGHT_DOOR']
+                                except IndexError:
+                                    ...
+                                finally:
+                                    door = Door(self.game, self.filename, (x, y), destination, spawn, key, lock_state)
+                                    tile = (MapTiles.GRASS, Tile(image, False, True, door))
                         row.append(tile)
                     self.tiles.append(row)
                 self.current_map = map_file
@@ -221,9 +264,13 @@ class Map:
             for x, tile in enumerate(row):
                 if not isinstance(tile, Tile):
                     if isinstance(tile, tuple):
-                        _rect = pygame.Rect(x * SCALE + 100, y * SCALE + 100, scale**4, scale**4)
-                        self.game.screen.blit(tile[0].texture, _rect)
-                        self.game.screen.blit(tile[1].texture, _rect)
+                        _rect = pygame.Rect(x * SCALE, y * SCALE + 100, scale**4, scale**4)
+                        try:
+                            self.game.screen.blit(tile[0].texture, _rect)
+                            self.game.screen.blit(tile[1].texture, _rect)
+                        except AttributeError:
+                            self.game.screen.blit(tile[1].texture, _rect)
+                            continue
                     continue
-                rect = pygame.Rect(x * SCALE + 100, y * SCALE  + 100, scale**4, scale**4)
+                rect = pygame.Rect(x * SCALE, y * SCALE  + 100, scale**4, scale**4)
                 self.game.screen.blit(tile.texture, rect)

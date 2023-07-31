@@ -3,10 +3,14 @@ from source.const import SCALE
 import pygame
 
 PLAYER_ICONS = {
-    Directions.SOUTH: 'resources/img/player.png',
-    Directions.NORTH: 'resources/img/player_UP.png',
-    Directions.WEST: 'resources/img/player_L.png',
-    Directions.EAST: 'resources/img/player_R.png'}
+    Directions.SOUTH: 'resources/img/player_.png',
+    Directions.NORTH: 'resources/img/player_UP_.png',
+    Directions.WEST: 'resources/img/player_L_.png',
+    Directions.EAST: 'resources/img/player_R_.png'}
+
+TOPBAR_ICONS = {
+    'FULL_HEART': 'resources/img/full_heart.png'
+}
 
 TILE_ICONS = {
     'WALL': pygame.transform.scale(
@@ -44,5 +48,14 @@ TILE_ICONS = {
         (SCALE, SCALE)),
     'CRATE': pygame.transform.scale(
         pygame.image.load('resources/img/tiles/crate.png'),
+        (SCALE, SCALE)),
+    'ROOFTOP': pygame.transform.scale(
+        pygame.image.load('resources/img/tiles/rooftop.png'),
+        (SCALE, SCALE)),
+    'BACK_ROOFTOP': pygame.transform.scale(
+        pygame.image.load('resources/img/tiles/back_rooftop.png'),
+        (SCALE, SCALE)),
+    'PATH_H': pygame.transform.scale(
+        pygame.image.load('resources/img/tiles/dirt_path.png'),
         (SCALE, SCALE)),
 }

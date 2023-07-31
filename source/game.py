@@ -40,8 +40,12 @@ class Game:
     def __init__(self) -> None:
         """Initializes the `Game` class."""
         pygame.init()
-        self.fonts = {'MENU': pygame.font.Font(None, 24), 'MAIN_MENU': pygame.font.Font(None, 50),
-                      'MAIN': pygame.font.SysFont('Jetbrains Mono', 50, True)}
+        self.fonts = {
+            'MENU': pygame.font.Font(None, 24),
+            'MAIN_MENU': pygame.font.Font(None, 50),
+            'MAIN': pygame.font.SysFont('Jetbrains Mono', 50, True),
+            'HEALTH': pygame.font.Font(None, 30),
+        }
         self.settings = Settings(self)
         self.graphics = self.settings.get_graphics()
         self.geometry: tuple[int, int] = (
