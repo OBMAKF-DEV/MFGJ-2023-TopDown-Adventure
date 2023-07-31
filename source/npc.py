@@ -51,4 +51,4 @@ class StoryNPC(NPC):
     def interact(self):
         """Gives the player a way of being able to interact with the NPC."""
         # todo -- create progress log for triggering interactable events (player / game???).
-        pass
+        conversation = self.get_speech()
