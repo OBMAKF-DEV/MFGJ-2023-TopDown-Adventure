@@ -5,6 +5,7 @@ from source.const import SCALE, map_objects
 from source.const.icons import TILE_ICONS
 from source.container import Container, InteractionObject, Item
 from source.door import Door, KeyItem
+from source.npc import StoryNPC
 
 from enum import Enum
 from typing import TextIO
@@ -78,6 +79,7 @@ class Map:
     objects: list[object]
     doors: list[dict]
     containers: list[dict]
+    friendly_npc: list[dict]
     element_data: Element | None
     
     def __init__(self, game) -> None:
@@ -96,11 +98,14 @@ class Map:
 
         self.containers = []
         self.doors = []
+        self.friendly_npc = []
+        self.game.npc = []
         
         tree = element.parse(f"resources/maps/data/{filename}.xml")
         
         self.element_data = tree.getroot()
         
+        # Get all container data
         for data in self.element_data.findall('.//container'):
             container = dict()
             container['x'] = int(data.attrib['x'])
@@ -119,6 +124,7 @@ class Map:
             
             self.containers.append(container)
         
+        # Get all door data
         for data in self.element_data.findall('.//door'):
             obj_attributes = ['x', 'y', 'state', 'key']  # Surface level attributes
             
@@ -133,7 +139,44 @@ class Map:
             door['spawn']['y'] = int(data.find('.//spawn').attrib['y'])
             
             self.doors.append(door)
+        
+        # Get all friendly NPC data
+        for data in self.element_data.findall('.//friendly'):
+            obj_attributes = [
+                'x', 'y', 'image', 'name', 'dialog',
+                'line', 'health', 'max_health', 'damage']
             
+            friendly = dict()
+            for key in obj_attributes:
+                friendly[key] = int(data.attrib[key]) if data.attrib[key].isnumeric() \
+                    else data.attrib[key]
+            scripts = []
+            
+            for script in data.findall('.//script'):
+                scripts.append(script.attrib['file'])
+            friendly['scripts'] = scripts
+            
+            self.friendly_npc.append(friendly)
+        
+        # Generate NPC's
+        friendly_npcs = []
+        for npc_data in self.friendly_npc:
+            image = pygame.transform.scale(
+                pygame.image.load(
+                    f"resources/img/npc/{npc_data['image']}.png"),
+                (self.game.graphics['SCALE']**4, self.game.graphics['SCALE']**4))
+            name = npc_data['name']
+            scripts = npc_data['scripts']
+            position = npc_data['x'], npc_data['y']
+            
+            friendly_npcs.append(StoryNPC(
+                self.game, friendly=True, name=name, image=image,
+                scripts=scripts, position=position, dialog=npc_data['dialog'], line=npc_data['line'],
+                health=npc_data['health'], max_health=npc_data['max_health'], damage=npc_data['damage']
+            ))
+        
+        self.game.npc.append(friendly_npcs)
+        
         self.tiles = []
         
         try:

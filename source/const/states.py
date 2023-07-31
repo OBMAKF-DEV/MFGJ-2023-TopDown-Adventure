@@ -9,6 +9,7 @@ class GameState(Enum):
     SUSPENDED = 4
     OPEN_MENU = 5
     MAIN_MENU = 6
+    DIALOG_OPEN = 7
 
 
 class ContainerState(Enum):
@@ -19,6 +20,11 @@ class ContainerState(Enum):
 class EntityState(Enum):
     DEAD = 0
     ALIVE = 1
+
+
+class DialogState(Enum):
+    NONE = 0
+    IN_DIALOG = 1
 
 
 class DoorState(Enum):

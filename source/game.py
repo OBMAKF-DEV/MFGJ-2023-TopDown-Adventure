@@ -35,6 +35,7 @@ class Game:
     map_containers = []
     map_doors = []
     map_keys = []
+    npc = []
     state = GameState.NONE
     
     def __init__(self) -> None:
@@ -98,6 +99,10 @@ class Game:
         """Groups together rendering methods to be called from the main event loop."""
         self.map.render()
         self.player.render()
+        for npc_type in self.npc:
+            for npc in npc_type:
+                npc.render()
+        
         if self.state == GameState.OPEN_MENU or self.state == GameState.MAIN_MENU:
             self.render_menu()
     
