@@ -1,4 +1,5 @@
 from source.const import SCALE, PLAYER_ICONS
+from source.const.icons import SWORD_PLAYER_ICONS
 from source.const.icons import TOPBAR_ICONS
 from source.utils.directions import *
 from source.map import Tile
@@ -36,6 +37,7 @@ class Player(Entity):
         self.facing_direction = Directions.SOUTH
         
         self.inventory = Inventory(self, [])
+        self.equipped = None
     
     def on_death(self) -> None:
         self.state = EntityState.DEAD
@@ -72,10 +74,10 @@ class Player(Entity):
             scale ** 4, scale ** 4)
         
         # Load and transform, the player icon.
+        _icon = PLAYER_ICONS[self.facing_direction] if self.equipped is None else \
+            SWORD_PLAYER_ICONS[self.facing_direction]
         icon = pygame.transform.scale(
-            pygame.image.load(
-                PLAYER_ICONS[self.facing_direction]),
-            (scale*4, scale*4))
+            pygame.image.load(_icon), (scale*4, scale*4))
         self.game.screen.blit(icon, rect)
     
     def face(self, direction):

@@ -56,6 +56,7 @@ class MapTiles:
     GRASS = Tile(TILE_ICONS['GRASS'], True, False, None)
     TILES = Tile(TILE_ICONS['TILES'], True, False, None)
     PATH_H = Tile(TILE_ICONS['PATH_H'], True, False, None)
+    TREE = Tile(TILE_ICONS['TREE'], False, False, None)
 
 
 class Map:
@@ -184,6 +185,9 @@ class Map:
                             case 'p':
                                 tile = MapTiles.PATH_H
                             
+                            case '*':
+                                tile = MapTiles.TREE
+                            
                             case 'R':
                                 tile = MapTiles.BACK_ROOFTOP
                             
@@ -248,10 +252,13 @@ class Map:
         container = self.element_data.find('.//container')
         
         # Search for the item in the data file & remove the value.
-        for _item in container.findall('.//object'):
-            if _item.attrib.get('name') == item.name:
-                container.find('.//items').remove(_item)
-                break
+        try:
+            for _item in container.findall('.//object'):
+                if _item.attrib.get('name') == item.name:
+                    container.find('.//items').remove(_item)
+                    break
+        except AttributeError:
+            pass
         
         # Save the current session data into the corresponding data file.
         with open(f"resources/maps/data/{self.filename}.xml", 'wb') as file:

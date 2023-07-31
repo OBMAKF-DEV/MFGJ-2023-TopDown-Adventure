@@ -8,6 +8,13 @@ PLAYER_ICONS = {
     Directions.WEST: 'resources/img/player_L_.png',
     Directions.EAST: 'resources/img/player_R_.png'}
 
+SWORD_PLAYER_ICONS = {
+    Directions.SOUTH: 'resources/img/player_sword.png',
+    Directions.NORTH: 'resources/img/player_UP_sword.png',
+    Directions.WEST: 'resources/img/player_L_sword.png',
+    Directions.EAST: 'resources/img/player_R_sword.png'
+}
+
 TOPBAR_ICONS = {
     'FULL_HEART': 'resources/img/full_heart.png'
 }
@@ -57,5 +64,8 @@ TILE_ICONS = {
         (SCALE, SCALE)),
     'PATH_H': pygame.transform.scale(
         pygame.image.load('resources/img/tiles/dirt_path.png'),
+        (SCALE, SCALE)),
+    'TREE': pygame.transform.scale(
+        pygame.image.load('resources/img/tiles/tree.png'),
         (SCALE, SCALE)),
 }

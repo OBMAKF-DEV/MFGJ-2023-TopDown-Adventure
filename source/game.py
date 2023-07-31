@@ -168,6 +168,8 @@ class Game:
                     if event.key == pygame.K_RETURN:
                         if len(self.container.items) > 0:
                             item = self.container.items.pop(self.selected_index)
+                            if item.name == 'sword':
+                                self.player.equipped = 'sword'
                             self.player.inventory.items.append(item)
                             self.map.remove_object_data(item)
                             self.selected_index -= 1
