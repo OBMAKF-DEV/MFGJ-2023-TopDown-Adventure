@@ -40,7 +40,8 @@ class Game:
     def __init__(self) -> None:
         """Initializes the `Game` class."""
         pygame.init()
-        self.fonts = {'MENU': pygame.font.Font(None, 24), 'MAIN_MENU': pygame.font.Font(None, 50)}
+        self.fonts = {'MENU': pygame.font.Font(None, 24), 'MAIN_MENU': pygame.font.Font(None, 50),
+                      'MAIN': pygame.font.SysFont('Jetbrains Mono', 50, True)}
         self.settings = Settings(self)
         self.graphics = self.settings.get_graphics()
         self.geometry: tuple[int, int] = (
@@ -223,11 +224,32 @@ class Game:
             self.screen.blit(header, ((self.player.position[0] + 2) * scale, self.player.position[1] * scale))
         
         elif self.state == GameState.MAIN_MENU:
-            self.screen.fill(rgb.CHARCOAL)
+            # Render MainMenu
+            self.screen.fill(rgb.CRIMSON)
             screen_width, screen_height = pygame.display.get_window_size()
+            
+            _ = self.main_menu.widgets['border']
+            _.fill(rgb.TAUPE)
+            self.screen.blit(_, ((screen_width/3) - 5, 95))
+            
+            _ = self.main_menu.widgets['panel']
+            _.fill(rgb.PURPLE)
+            self.screen.blit(_, (screen_width / 3, 100))
+            
+            _ = self.main_menu.widgets['button']
+            _.fill(rgb.TAUPE)
+            self.screen.blit(_, ((screen_width/3) + 5, 105))
+            
             for i, item in enumerate(self.main_menu.options):
-                color = rgb.YELLOW if i == self.selected_index else rgb.GRAY
-                self.screen.blit(self.fonts['MAIN_MENU'].render(item, True, color), (0, i * 30))
+                color = rgb.MAUVE if self.selected_index == i else rgb.PURPLE
+                
+                _ = self.main_menu.widgets['label']
+                _.fill(color)
+                self.screen.blit(_, ((screen_width/3) + 10, 110 + ((175/3) * i)))
+                
+                color = rgb.YELLOW if self.selected_index == i else rgb.GRAY
+                self.screen.blit(self.fonts['MAIN_MENU'].render(item, 0, color), (
+                    (screen_width/3) + 10, 110 + ((170/3) * i + ((170/3)/3))))
             
         pygame.display.flip()
     
