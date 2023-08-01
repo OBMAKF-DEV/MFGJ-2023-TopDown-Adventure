@@ -12,5 +12,13 @@
                 </destination>
             </door>
         </doors>
+
+        <!-- NPC -->
+        <npc>
+            <enemy x="10" y="5" image="prof" name="..." dialog="0" line="0"
+                health="100" max_health="100" damage="2">
+            </enemy>
+        </npc>
+
     </objects>
 </world>

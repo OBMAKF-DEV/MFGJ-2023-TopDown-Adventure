@@ -5,7 +5,7 @@ from source.const import SCALE, map_objects
 from source.const.icons import TILE_ICONS
 from source.container import Container, InteractionObject, Item
 from source.door import Door, KeyItem
-from source.npc import StoryNPC
+from source.npc import StoryNPC, EnemyNPC
 
 from enum import Enum
 from typing import TextIO
@@ -80,6 +80,7 @@ class Map:
     doors: list[dict]
     containers: list[dict]
     friendly_npc: list[dict]
+    enemy_npc: list[dict]
     element_data: Element | None
     
     def __init__(self, game) -> None:
@@ -99,6 +100,7 @@ class Map:
         self.containers = []
         self.doors = []
         self.friendly_npc = []
+        self.enemy_npc = []
         self.game.npc = []
         
         tree = element.parse(f"resources/maps/data/{filename}.xml")
@@ -157,6 +159,25 @@ class Map:
             friendly['scripts'] = scripts
             
             self.friendly_npc.append(friendly)
+
+        # Get all enemy NPC data.
+        for data in self.element_data.findall('.//enemy'):
+            obj_attributes = [
+                'x', 'y', 'image', 'name',
+                'health', 'max_health', 'damage']
+
+            enemy = dict()
+
+            for key in obj_attributes:
+                enemy[key] = int(data.attrib[key]) if data.attrib[key].isnumeric() \
+                    else data.attrib[key]
+            scripts = []
+
+            for script in data.findall('.//script'):
+                scripts.append(script.attrib['file'])
+            enemy['scripts'] = scripts
+
+            self.enemy_npc.append(enemy)
         
         # Generate NPC's
         friendly_npcs = []
@@ -174,8 +195,22 @@ class Map:
                 scripts=scripts, position=position, dialog=npc_data['dialog'], line=npc_data['line'],
                 health=npc_data['health'], max_health=npc_data['max_health'], damage=npc_data['damage']
             ))
+
+        enemy_npcs = []
+        for npc_data in self.enemy_npc:
+            image = pygame.transform.scale(
+                pygame.image.load(
+                    f"resources/img/npc/{npc_data['image']}.png"),
+                (self.game.graphics['SCALE'] ** 4, self.game.graphics['SCALE'] ** 4))
+            name = npc_data['name']
+            position = npc_data['x'], npc_data['y']
+
+            friendly_npcs.append(EnemyNPC(
+                self.game, name=name, image=image, position=position,
+                health=npc_data['health'], max_health=npc_data['max_health'], damage=npc_data['damage']
+            ))
         
-        self.game.npc.append(friendly_npcs)
+        self.game.npc.append(enemy_npcs)
         
         self.tiles = []
         

@@ -92,8 +92,9 @@ class Player(Entity):
         if isinstance(asset, Tile):
             if asset.is_passable:
                 self.position = position
-    
-    def interact(self):
+
+    def get_facing(self) -> tuple[int, int] | None:
+        """Gets the coordinates of the tile that the player is facing."""
         if self.facing_direction == Directions.NORTH:
             x, y = north(self.position)
         elif self.facing_direction == Directions.SOUTH:
@@ -102,7 +103,10 @@ class Player(Entity):
             x, y = west(self.position)
         else:
             x, y = east(self.position)
-        
+        return x, y
+    
+    def interact(self):
+        x, y = self.get_facing()
         tile = self.game.map.tiles[y//4][x//4]
         if isinstance(tile, Tile):
             if tile.object is not None and tile.can_interact:
@@ -114,3 +118,12 @@ class Player(Entity):
             elif isinstance(tile[1], Tile):
                 if tile[1].object is not None and tile[1].can_interact:
                     return tile[1].object.interact()
+
+    def attack(self) -> None:
+        x, y = self.get_facing()
+        for npc_types in self.game.npc:
+            for npc in npc_types:
+                if npc.position != (x, y):
+                    continue
+                self.deal_damage(npc)
+        ...  # todo - complete action

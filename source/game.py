@@ -46,6 +46,7 @@ class Game:
             'MAIN_MENU': pygame.font.Font(None, 50),
             'MAIN': pygame.font.SysFont('Jetbrains Mono', 50, True),
             'HEALTH': pygame.font.Font(None, 30),
+            'DIALOG': pygame.font.Font(None, 20),
         }
         self.settings = Settings(self)
         self.graphics = self.settings.get_graphics()
