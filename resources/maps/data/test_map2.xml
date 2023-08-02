@@ -18,5 +18,15 @@
                 </destination>
             </door>
         </doors>
+
+        <!-- NPCs -->
+        <npc>
+            <friendly x="10" y="5" image="prof" name="prof" dialog="0" line="0"
+                health="100" max_health="100" damage="0">
+                <scripts>
+                    <script file="test_quest"/>
+                </scripts>
+            </friendly>
+        </npc>
     </objects>
 </world>
