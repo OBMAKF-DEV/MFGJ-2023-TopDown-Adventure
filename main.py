@@ -4,7 +4,7 @@ import shutil
 from time import sleep
 from source.utils import *
 from source import Game, InteractionObject
-from source.const import GameState, ContainerState, rgb
+from source.const import GameState, ContainerState, rgb, TOTAL_PLAYER_ANIMATION_VALUE
 
 DATA_FILES = ['test_map.xml', 'test_map2.xml', 'test_map2b.xml']
 

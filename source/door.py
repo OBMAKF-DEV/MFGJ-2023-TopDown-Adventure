@@ -1,6 +1,5 @@
 import tkinter.messagebox as msg
 from source.items import InteractionObject, KeyItem
-from source.const.map_objects import OBJECTS
 from source.const import DoorState
 
 

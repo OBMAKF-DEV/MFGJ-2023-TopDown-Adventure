@@ -3,10 +3,12 @@ from source.const import SCALE
 import pygame
 
 PLAYER_ICONS = {
-    Directions.SOUTH: 'resources/img/player_.png',
-    Directions.NORTH: 'resources/img/player_UP_.png',
-    Directions.WEST: 'resources/img/player_L_.png',
-    Directions.EAST: 'resources/img/player_R_.png'}
+    Directions.SOUTH: [f'resources/img/player/south/player0{i}.png' for i in range(6)],
+    Directions.NORTH: [f'resources/img/player/north/player0{i}.png' for i in range(6)],
+    Directions.WEST : [f'resources/img/player/west/player0{i}.png' for i in range(6)],
+    Directions.EAST : [f'resources/img/player/east/player0{i}.png' for i in range(6)]
+}
+
 
 SWORD_PLAYER_ICONS = {
     Directions.SOUTH: 'resources/img/player_sword.png',

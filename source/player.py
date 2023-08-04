@@ -1,4 +1,4 @@
-from source.const import SCALE, PLAYER_ICONS
+from source.const import SCALE, PLAYER_ICONS, TOTAL_PLAYER_ANIMATION_VALUE
 from source.const.icons import SWORD_PLAYER_ICONS
 from source.const.icons import TOPBAR_ICONS
 from source.utils.directions import *
@@ -24,6 +24,7 @@ class Inventory(Container):
 
 class Player(Entity):
     inventory: Inventory
+    animation_value = 0
     
     def __init__(
             self, game, position: tuple[int, int] = (5, 6),
@@ -47,19 +48,33 @@ class Player(Entity):
         width, height = pygame.display.get_desktop_sizes()[0]
         bar = pygame.Surface((width, 80))
         bar.fill(rgb.GRAY)
+        bar.blit(
+            self.game.fonts['HEALTH'].render(f"Location: {self.game.map.filename}", 0, rgb.BLACK),
+            ((width / 6) * 4, 30))
         self.game.screen.blit(bar, (0, 0))
         
+        # Health Bar
         health_display = pygame.Surface((350, 60))
         health_display.fill(rgb.GRAY)
         hp = self.game.fonts['HEALTH'].render(f"HP: {self.health} / {self.max_health}", 0, rgb.BLACK)
         health_display.blit(hp, (170, 30))
         
         heart = pygame.transform.scale(pygame.image.load(TOPBAR_ICONS['FULL_HEART']), (30, 30))
+        n = 0
+        if 80 < self.health <= self.max_health:
+            n = 5
+        elif 60 < self.health <= 80:
+            n = 4
+        elif 40 < self.health <= 60:
+            n = 3
+        elif 20 < self.health <= 40:
+            n = 2
+        elif 0 < self.health <= 20:
+            n = 1
         
-        match self.health:
-            case 100:
-                for i in range(5):
-                    health_display.blit(heart, (30*i+10, 20))
+        if n > 0:
+            for i in range(n):
+                health_display.blit(heart, (30*i+10, 20))
         self.game.screen.blit(health_display, (10, 10))
     
     def render(self) -> None:
@@ -73,11 +88,26 @@ class Player(Entity):
             self.position[1] * scale - (scale * 3) + 100,
             scale ** 4, scale ** 4)
         
+        _x, _y = self.get_facing()
+        try:
+            tile = self.game.map.tiles[_y//4][_x//4]
+        except IndexError:
+            return
+        
+        if (self.game.held_keys['s'] is True or
+            self.game.held_keys['w'] is True or
+            self.game.held_keys['a'] is True or
+            self.game.held_keys['d'] is True) and isinstance(tile, Tile) and tile.is_passable:
+            self.animation_value += 1
+            if self.animation_value > TOTAL_PLAYER_ANIMATION_VALUE:
+                self.animation_value = 0
+        
         # Load and transform, the player icon.
-        _icon = PLAYER_ICONS[self.facing_direction] if self.equipped is None else \
-            SWORD_PLAYER_ICONS[self.facing_direction]
+        _icon = PLAYER_ICONS[self.facing_direction][int(self.animation_value/2)]
+        #_icon = PLAYER_ICONS[self.facing_direction] if self.equipped is None else \
+        #    SWORD_PLAYER_ICONS[self.facing_direction]
         icon = pygame.transform.scale(
-            pygame.image.load(_icon), (scale*4, scale*4))
+            pygame.transform.scale(pygame.image.load(_icon), (scale*4, scale*4)), (40, 40))
         self.game.screen.blit(icon, rect)
     
     def face(self, direction):

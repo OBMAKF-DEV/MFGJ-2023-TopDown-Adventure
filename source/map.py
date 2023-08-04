@@ -1,7 +1,7 @@
 import xml.etree.ElementTree as element
 from xml.etree.ElementTree import Element
 
-from source.const import SCALE, map_objects
+from source.const import SCALE
 from source.const.icons import TILE_ICONS
 from source.container import Container, InteractionObject, Item
 from source.door import Door, KeyItem
