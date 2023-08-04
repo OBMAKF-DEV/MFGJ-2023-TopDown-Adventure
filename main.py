@@ -6,13 +6,13 @@ from source.utils import *
 from source import Game, InteractionObject
 from source.const import GameState, ContainerState, rgb
 
-DATA_FILES = ['test_map.xml', 'test_map2.xml']
+DATA_FILES = ['test_map.xml', 'test_map2.xml', 'test_map2b.xml']
 
 
 def main():
     """The main looping function."""
     game = Game()
-    game.state = GameState.MAIN_MENU
+    game.main_menu.open()
     
     while game.state != GameState.ENDED:
         

@@ -1,0 +1,9 @@
+<player>
+    <stats>
+        <health current="100" max="100"/>
+        <damage dmg="5"/>
+    </stats>
+    <inventory>
+        <items/>
+    </inventory>
+</player>

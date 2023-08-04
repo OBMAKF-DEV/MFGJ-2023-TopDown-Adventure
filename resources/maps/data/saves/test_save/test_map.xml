@@ -1,0 +1,21 @@
+<world>
+    <objects>
+        
+        <containers>
+            <container x="13" y="4">
+                <items>
+                    </items>
+            </container>
+        </containers>
+
+        
+        <doors>
+            <door x="14" y="3" state="locked" key="test_key">
+                <destination>
+                    <location>test_map2</location>
+                    <spawn x="4" y="6" />
+                </destination>
+            </door>
+        </doors>
+    </objects>
+</world>

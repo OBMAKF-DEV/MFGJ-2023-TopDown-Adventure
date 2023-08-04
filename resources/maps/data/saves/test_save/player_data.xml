@@ -1,0 +1,13 @@
+<player equipped = "sword">
+    <stats>
+        <health current="100" max="100"/>
+        <damage dmg="5"/>
+    </stats>
+    <inventory>
+        <items>
+            <object type="Item" name="sword" image="None"/>
+            <object type="KeyItem" name="test_key" image="None"/>
+            <object type="Item" name="apple" image="None"/>
+        </items>
+    </inventory>
+</player>

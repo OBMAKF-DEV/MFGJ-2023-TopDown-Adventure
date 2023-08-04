@@ -35,3 +35,6 @@ class DoorState(Enum):
 class MenuState(Enum):
     CLOSED = 0
     OPENED = 1
+    LOAD = 2
+    SAVE = 3
+    CREATE_SAVE = 4

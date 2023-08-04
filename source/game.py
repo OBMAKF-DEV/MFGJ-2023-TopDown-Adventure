@@ -5,11 +5,13 @@ from source.map import Map
 from source.player import Player
 from source.main_menu import MainMenu
 from source.utils import *
-from source.const import GameState, ContainerState, rgb
+from source.const import GameState, ContainerState, MenuState, rgb
 from source.container import Container
+from source.utils.save_handling import load_game, save_game
 import pygame
 import multiprocessing
 from pygame import Surface
+import tomli
 
 
 class Game:
@@ -26,12 +28,18 @@ class Game:
         player (Player):                    The main player object.
         map (Map):                          Contains methods for loading map files and rending the environment.
     """
+    savefile = 'default'
+    save_slot = None
+    slots = []
+    
+    user_text = ''
+    
     held_keys: dict[str, bool] = {'w': False, 'a': False, 's': False, 'd': False}
     process = None
     selected_index: int | None = 0
     container: Container | None
     
-    maps: list[str] = ['test_map', 'test_map2']
+    maps: list[str] = ['test_map', 'test_map2', 'test_map2b']
     map_containers = []
     map_doors = []
     map_keys = []
@@ -40,13 +48,22 @@ class Game:
     
     def __init__(self) -> None:
         """Initializes the `Game` class."""
+        # set the save / load slots
+        with open('resources/maps/data/saves/index.toml', 'rb') as indexes:
+            slots = tomli.load(indexes)['slots']
+            self.slots = [slots[str(i)] for i in range(1, 5)]
+        
+        # initialize pygame
         pygame.init()
+        
+        # create fonts
         self.fonts = {
             'MENU': pygame.font.Font(None, 24),
             'MAIN_MENU': pygame.font.Font(None, 50),
             'MAIN': pygame.font.SysFont('Jetbrains Mono', 50, True),
             'HEALTH': pygame.font.Font(None, 30),
         }
+        
         self.settings = Settings(self)
         self.graphics = self.settings.get_graphics()
         self.geometry: tuple[int, int] = (
@@ -60,7 +77,7 @@ class Game:
         self.map = Map(self)
         self.main_menu = MainMenu(self)
         
-        self.state = GameState.MAIN_MENU
+        #self.state = GameState.MAIN_MENU
         
         self.set_area(0)
     
@@ -85,6 +102,8 @@ class Game:
             case 5:
                 self.state = GameState.OPEN_MENU
                 return
+            case 6:
+                self.state = GameState.MAIN_MENU
     
     def set_area(self, index: int) -> None:
         """Sets the current map file (***** check usage...)"""
@@ -112,6 +131,15 @@ class Game:
         if self.state == GameState.RUNNING:
             self.main_menu.options[0] = "Continue"
             self.main_menu.options[1] = "Save Game"
+        elif self.state == GameState.MAIN_MENU:
+            if self.main_menu.state == MenuState.LOAD or \
+                    self.main_menu.state == MenuState.SAVE:
+                self.main_menu.options = []
+                for savefile in self.slots:
+                    if savefile == 'default':
+                        self.main_menu.options.append("Empty")
+                        continue
+                    self.main_menu.options.append(savefile)
         self.handle_events()
         self.render()
     
@@ -143,7 +171,7 @@ class Game:
                 elif event.type == pygame.KEYDOWN:
                     match event.key:
                         case pygame.K_ESCAPE:
-                            self.state = GameState.MAIN_MENU
+                            self.main_menu.open()
                         case pygame.K_w | pygame.K_UP:
                             self.held_keys['w'] = True
                             self.player.face(Directions.NORTH)
@@ -199,21 +227,51 @@ class Game:
             
             elif self.state == GameState.MAIN_MENU:
                 if event.type == pygame.KEYDOWN:
-                    if event.key == pygame.K_DOWN or \
-                            event.key == pygame.K_s:
-                        if self.selected_index >= len(self.main_menu.options)-1:
-                            continue
-                        self.selected_index += 1
-                    
-                    if event.key == pygame.K_UP or \
-                            event.key == pygame.K_d:
-                        if self.selected_index <= 0:
-                            continue
-                        self.selected_index -= 1
-                    
-                    if event.key == pygame.K_RETURN:
-                        self.main_menu.commands[self.selected_index]()
-                        self.main_menu.close()
+                    print(self.main_menu.state)
+                    if self.main_menu.state == MenuState.CREATE_SAVE:
+                        if event.key == pygame.K_RETURN:
+                            save_game(self, self.selected_index+1, self.user_text)
+                            self.user_text = ""
+                            self.main_menu.close()
+                        elif event.key == pygame.K_ESCAPE:
+                            self.user_text = ""
+                            self.set_state(1)
+                            self.main_menu.open()
+                        elif event.key == pygame.K_BACKSPACE:
+                            self.user_text = self.user_text[:-1]
+                        else:
+                            if len(self.user_text) < 16:
+                                self.user_text += event.unicode
+                    else:
+                        if event.key == pygame.K_DOWN or \
+                                event.key == pygame.K_s:
+                            if self.selected_index >= len(self.main_menu.options)-1:
+                                continue
+                            self.selected_index += 1
+                        
+                        if event.key == pygame.K_UP or \
+                                event.key == pygame.K_d:
+                            if self.selected_index <= 0:
+                                continue
+                            self.selected_index -= 1
+                        
+                        if event.key == pygame.K_RETURN:
+                            if self.main_menu.state == MenuState.OPENED:
+                                return self.main_menu.commands[self.main_menu.options[self.selected_index]]()
+                            
+                            elif self.main_menu.state == MenuState.SAVE:
+                                self.save_slot = self.selected_index + 1
+                                self.main_menu.set_state(4)
+                            
+                            else:
+                                load_game(self, self.selected_index+1)
+                            
+                            if self.main_menu.options[self.selected_index] != 'Empty':
+                                self.main_menu.close()
+                        
+                        if event.key == pygame.K_ESCAPE:
+                            if self.main_menu.state == MenuState.LOAD:
+                                self.main_menu.set_state(1)
     
     def render_menu(self):
         scale = self.graphics["SCALE"]
@@ -239,6 +297,10 @@ class Game:
             self.screen.fill(rgb.CRIMSON)
             screen_width, screen_height = pygame.display.get_window_size()
             
+            if self.main_menu.state == MenuState.LOAD or self.main_menu.state == MenuState.SAVE or \
+                    self.main_menu.state == MenuState.CREATE_SAVE:
+                self.screen.blit(self.main_menu.widgets['title'], ((screen_width/9) - 5, 45))
+            
             _ = self.main_menu.widgets['border']
             _.fill(rgb.TAUPE)
             self.screen.blit(_, ((screen_width/3) - 5, 95))
@@ -248,19 +310,25 @@ class Game:
             self.screen.blit(_, (screen_width / 3, 100))
             
             _ = self.main_menu.widgets['button']
-            _.fill(rgb.TAUPE)
+            _.fill(rgb.TAUPE if self.main_menu.state != MenuState.CREATE_SAVE else rgb.BLACK)
             self.screen.blit(_, ((screen_width/3) + 5, 105))
             
-            for i, item in enumerate(self.main_menu.options):
-                color = rgb.MAUVE if self.selected_index == i else rgb.PURPLE
-                
-                _ = self.main_menu.widgets['label']
-                _.fill(color)
-                self.screen.blit(_, ((screen_width/3) + 10, 110 + ((175/3) * i)))
-                
-                color = rgb.YELLOW if self.selected_index == i else rgb.GRAY
-                self.screen.blit(self.fonts['MAIN_MENU'].render(item, 0, color), (
-                    (screen_width/3) + 10, 110 + ((170/3) * i + ((170/3)/3))))
+            if self.main_menu.state == MenuState.CREATE_SAVE:
+                self.screen.blit(
+                    self.fonts['MAIN_MENU'].render(self.user_text, 0, rgb.YELLOW, rgb.MAUVE),
+                    ((screen_width/3) + 10, 120)
+                )
+            else:
+                for i, item in enumerate(self.main_menu.options):
+                    color = rgb.MAUVE if self.selected_index == i else rgb.PURPLE
+                    
+                    _ = self.main_menu.widgets['label']
+                    _.fill(color)
+                    self.screen.blit(_, ((screen_width/3) + 10, 110 + ((175/3) * i)))
+                    
+                    color = rgb.YELLOW if self.selected_index == i else rgb.GRAY
+                    self.screen.blit(self.fonts['MAIN_MENU'].render(item, 0, color), (
+                        (screen_width/3) + 10, 110 + ((170/3) * i + ((170/3)/3))))
             
         pygame.display.flip()
     
