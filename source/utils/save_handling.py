@@ -14,7 +14,7 @@ def save_game(game, slot: int, save_name: str):
         save_name (str): The name to assign the save files to.
     """
     print(game.player.inventory.items)
-    DATA_FILES = ['test_map.xml', 'test_map2.xml', 'test_map2b.xml']
+    DATA_FILES = ['test_map.xml', 'test_map2.xml', 'test_map2b.xml', 'cave_entrance.xml']
     with open('resources/maps/data/saves/index.toml', 'rb') as indexer:
         _data = tomli.load(indexer)['slots']
         slots = [_data[str(i)] for i in range(1, 5)]
@@ -70,7 +70,7 @@ def save_game(game, slot: int, save_name: str):
 
 def load_game(game, slot: int):
     """Sets the XML data files to load previously saved game data."""
-    DATA_FILES = ['test_map.xml', 'test_map2.xml', 'test_map2b.xml', 'player_data.xml']
+    DATA_FILES = ['test_map.xml', 'test_map2.xml', 'test_map2b.xml', 'cave_entrance.xml', 'player_data.xml']
     print(str(slot))
     # set data files to the value stored in the slot
     with open('resources/maps/data/saves/index.toml', 'rb') as indexer:

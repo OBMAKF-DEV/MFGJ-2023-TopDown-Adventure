@@ -280,6 +280,24 @@ class Map:
                                 tile = Tile(TILE_ICONS['CRATE'], False, True, container)
                                 #self.game.map_containers.append(container)
                             
+                            case 'P':
+                                for _data in self.doors:
+                                    if _data['x'] == x and _data['y'] == y:
+                                        lock_state = False
+                                        key = 'test_key'
+                                        destination = _data['destination']
+                                        spawn = _data['spawn']['x'], _data['spawn']['y']
+                                        image = TILE_ICONS['PATH_H']
+                                        door = Door(
+                                            game=self.game,
+                                            location=self.filename,
+                                            position=(x, y),
+                                        destination=destination,
+                                        spawn=spawn,
+                                        key=_data['key'],
+                                        locked=lock_state)
+                                        tile = Tile(image, False, True, door)
+                            
                             case '>':
                                 key = None
                                 for _data in self.doors:

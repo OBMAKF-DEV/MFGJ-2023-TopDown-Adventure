@@ -11,6 +11,12 @@
                     <spawn x="66" y="42"/>
                 </destination>
             </door>
+            <door x="42" y="10" state="unlocked" key="test_key">
+                <destination>
+                    <location>cave_entrance</location>
+                    <spawn x="6" y="42"/>
+                </destination>
+            </door>
         </doors>
 
         <!-- NPC -->

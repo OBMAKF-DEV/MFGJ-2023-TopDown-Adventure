@@ -49,7 +49,7 @@ class Player(Entity):
         bar = pygame.Surface((width, 80))
         bar.fill(rgb.GRAY)
         bar.blit(
-            self.game.fonts['HEALTH'].render(f"Location: {self.game.map.filename}", 0, rgb.BLACK),
+            self.game.fonts['HEALTH'].render(f"Location: {str(self.game.map.filename).replace('_', ' ').title()}", 0, rgb.BLACK),
             ((width / 6) * 4, 30))
         self.game.screen.blit(bar, (0, 0))
         

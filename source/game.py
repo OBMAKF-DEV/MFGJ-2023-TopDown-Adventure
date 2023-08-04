@@ -39,7 +39,7 @@ class Game:
     selected_index: int | None = 0
     container: Container | None
     
-    maps: list[str] = ['test_map', 'test_map2', 'test_map2b']
+    maps: list[str] = ['test_map', 'test_map2', 'test_map2b', 'cave_entrance']
     map_containers = []
     map_doors = []
     map_keys = []
@@ -271,7 +271,8 @@ class Game:
                                 self.main_menu.close()
                         
                         if event.key == pygame.K_ESCAPE:
-                            if self.main_menu.state == MenuState.LOAD:
+                            if self.main_menu.state == MenuState.LOAD or \
+                                    self.main_menu.state == MenuState.SAVE:
                                 self.main_menu.set_state(1)
     
     def render_menu(self):
