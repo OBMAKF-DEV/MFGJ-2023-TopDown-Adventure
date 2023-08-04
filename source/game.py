@@ -278,6 +278,7 @@ class Game:
     def render_menu(self):
         scale = self.graphics["SCALE"]
         
+        # Container and Inventory rendering
         if self.state == GameState.OPEN_MENU:
             header = pygame.surface.Surface((110, 225))
             header.fill(rgb.CHARCOAL)
@@ -291,12 +292,20 @@ class Game:
                 text = self.fonts['MENU'].render(item.name, True, color)
                 menu.blit(text, (0, i * 25))
             header.blit(menu, (5, 20))
-            
-            self.screen.blit(header, ((self.player.position[0] + 2) * scale, self.player.position[1] * scale))
+            if self.player.position[0] <= 152:
+                self.screen.blit(header, ((self.player.position[0] + 2) * scale, self.player.position[1] * scale))
+                return
+            self.screen.blit(header, ((self.player.position[0] - 20) * scale, self.player.position[1] * scale))
         
+        # Main Menu rendering
         elif self.state == GameState.MAIN_MENU:
             # Render MainMenu
-            self.screen.fill(rgb.CRIMSON)
+            _rect = pygame.Rect(0, 0, self.geometry[0]*4, self.geometry[1]*4)
+            img = pygame.transform.scale(
+                pygame.image.load('resources/img/stoneface.png'),
+                (self.geometry[0]*2, self.geometry[1]*1.5))
+            self.screen.blit(img, _rect)
+            #self.screen.fill(rgb.CRIMSON)
             screen_width, screen_height = pygame.display.get_window_size()
             
             if self.main_menu.state == MenuState.LOAD or self.main_menu.state == MenuState.SAVE or \
@@ -308,7 +317,7 @@ class Game:
             self.screen.blit(_, ((screen_width/3) - 5, 95))
             
             _ = self.main_menu.widgets['panel']
-            _.fill(rgb.PURPLE)
+            _.fill(rgb.BLACK)
             self.screen.blit(_, (screen_width / 3, 100))
             
             _ = self.main_menu.widgets['button']
@@ -322,13 +331,13 @@ class Game:
                 )
             else:
                 for i, item in enumerate(self.main_menu.options):
-                    color = rgb.MAUVE if self.selected_index == i else rgb.PURPLE
+                    color = rgb.MAUVE if self.selected_index == i else rgb.CHARCOAL
                     
                     _ = self.main_menu.widgets['label']
                     _.fill(color)
                     self.screen.blit(_, ((screen_width/3) + 10, 110 + ((175/3) * i)))
                     
-                    color = rgb.YELLOW if self.selected_index == i else rgb.GRAY
+                    color = rgb.BLACK if self.selected_index == i else rgb.GRAY
                     self.screen.blit(self.fonts['MAIN_MENU'].render(item, 0, color), (
                         (screen_width/3) + 10, 110 + ((170/3) * i + ((170/3)/3))))
             
