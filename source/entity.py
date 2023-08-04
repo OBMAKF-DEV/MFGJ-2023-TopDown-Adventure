@@ -4,6 +4,8 @@ from typing import Type
 
 
 class Entity:
+    facing_direction = None
+
     def __init__(self, health, max_health, damage: int) -> None:
         self.state = EntityState.ALIVE
         self.health = health

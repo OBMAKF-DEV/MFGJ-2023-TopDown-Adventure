@@ -22,6 +22,11 @@ class EntityState(Enum):
     ALIVE = 1
 
 
+class NPCState(Enum):
+    NONE = 0
+    OPEN_INVENTORY = 1
+
+
 class DialogState(Enum):
     NONE = 0
     IN_DIALOG = 1
