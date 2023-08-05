@@ -6,7 +6,13 @@ from source.utils import *
 from source import Game, InteractionObject
 from source.const import GameState, ContainerState, rgb, TOTAL_PLAYER_ANIMATION_VALUE
 
-DATA_FILES = ['test_map.xml', 'test_map2.xml', 'test_map2b.xml']
+DATA_FILES = [
+    'test_map.xml',
+    'test_map2.xml',
+    'test_map2b.xml',
+    'cave_entrance.xml',
+    'player_data.xml'
+]
 
 
 def main():

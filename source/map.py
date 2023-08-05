@@ -52,6 +52,7 @@ class MapTiles:
     BACK_ROOFTOP = Tile(TILE_ICONS['BACK_ROOFTOP'], False, False, None)
     LEFT_WALL = Tile(TILE_ICONS['LEFT_WALL'], False, False, None)
     BACK_WALL = Tile(TILE_ICONS['BACK_WALL'], False, False, None)
+    ROCK_WALL = Tile(TILE_ICONS['ROCK_WALL'], False, False, None)
     ROOFTOP = Tile(TILE_ICONS['ROOFTOP'], False, False, None)
     WALL = Tile(TILE_ICONS['WALL'], False, False, None)
     GRASS = Tile(TILE_ICONS['GRASS'], True, False, None)
@@ -269,6 +270,9 @@ class Map:
                             case 'R':
                                 tile = MapTiles.BACK_ROOFTOP
                             
+                            case '"':
+                                tile = MapTiles.ROCK_WALL
+                            
                             case '+':
                                 for _data in self.containers:
                                     items = []
@@ -311,6 +315,25 @@ class Map:
                                     _check = line.strip()[y][x-1]
                                     if _check != '?':
                                         image = TILE_ICONS['RIGHT_DOOR']
+                                except IndexError:
+                                    ...
+                                finally:
+                                    door = Door(self.game, self.filename, (x, y), destination, spawn, key, lock_state)
+                                    tile = Tile(image, False, True, door)
+                            
+                            case '/':
+                                key = None
+                                for _data in self.doors:
+                                    if _data['x'] == x and _data['y'] == y:
+                                        lock_state = True if _data['state'] == 'locked' else False
+                                        key = _data['key'] if _data['key'] != 'None' else None
+                                        destination = _data['destination']
+                                        spawn = _data['spawn']['x'], _data['spawn']['y']
+                                image = TILE_ICONS['CAVE_DOOR']
+                                try:
+                                    _check = line.strip()[y][x-1]
+                                    if _check != '?':
+                                        image = TILE_ICONS['CAVE_DOOR']
                                 except IndexError:
                                     ...
                                 finally:
