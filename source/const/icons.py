@@ -31,6 +31,12 @@ TILE_ICONS = {
     'CAVE_DOOR': pygame.transform.scale(
         pygame.image.load('resources/img/tiles/cave_door.png'),
         (SCALE, SCALE)),
+    'ROCK_CORNER': pygame.transform.scale(
+        pygame.image.load('resources/img/tiles/rock_corner.png'),
+        (SCALE, SCALE)),
+    'ROCK_EDGE': pygame.transform.scale(
+        pygame.image.load('resources/img/tiles/rock_edge.png'),
+        (SCALE, SCALE)),
     'GRASS': pygame.transform.scale(
         pygame.image.load('resources/img/tiles/grass1.png'),
         (SCALE, SCALE)),

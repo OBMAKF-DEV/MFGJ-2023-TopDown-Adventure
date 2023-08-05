@@ -49,7 +49,9 @@ class MapTiles:
     FRONT_RIGHT_WALL = Tile(TILE_ICONS['FRONT_RIGHT_WALL'], False, False, None)
     FRONT_LEFT_WALL = Tile(TILE_ICONS['FRONT_LEFT_WALL'], False, False, None)
     RIGHT_WALL = Tile(TILE_ICONS['RIGHT_WALL'], False, False, None)
+    ROCK_CORNER = Tile(TILE_ICONS['ROCK_CORNER'], False, False, None)
     BACK_ROOFTOP = Tile(TILE_ICONS['BACK_ROOFTOP'], False, False, None)
+    ROCK_EDGE = Tile(TILE_ICONS['ROCK_EDGE'], False, False, None)
     LEFT_WALL = Tile(TILE_ICONS['LEFT_WALL'], False, False, None)
     BACK_WALL = Tile(TILE_ICONS['BACK_WALL'], False, False, None)
     ROCK_WALL = Tile(TILE_ICONS['ROCK_WALL'], False, False, None)
@@ -272,6 +274,12 @@ class Map:
                             
                             case '"':
                                 tile = MapTiles.ROCK_WALL
+                            
+                            case "'":
+                                tile = (MapTiles.GRASS, MapTiles.ROCK_EDGE)
+                            
+                            case 'c':
+                                tile = MapTiles.ROCK_CORNER
                             
                             case '+':
                                 for _data in self.containers:
