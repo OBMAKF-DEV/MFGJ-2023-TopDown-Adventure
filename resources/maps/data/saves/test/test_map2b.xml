@@ -1,0 +1,30 @@
+<!-- test_map2.xml -->
+<world>
+    <objects>
+        <!-- Containers -->
+
+        <!-- Doors -->
+        <doors>
+            <door x="17" y="10" state="unlocked" key="test_key">
+                <destination>
+                    <location>test_map2</location>
+                    <spawn x="66" y="42"/>
+                </destination>
+            </door>
+            <door x="42" y="10" state="unlocked" key="test_key">
+                <destination>
+                    <location>cave_entrance</location>
+                    <spawn x="6" y="42"/>
+                </destination>
+            </door>
+        </doors>
+
+        <!-- NPC -->
+        <npc>
+            <enemy x="10" y="5" image="prof" name="..." dialog="0" line="0"
+                health="100" max_health="100" damage="2">
+            </enemy>
+        </npc>
+
+    </objects>
+</world>

@@ -1,0 +1,11 @@
+<player>
+    <stats>
+        <health current="100" max="100"/>
+        <damage dmg="5"/>
+    </stats>
+    <inventory>
+        <items>
+            <object type="Item" name="apple" image="None"/>
+        </items>
+    </inventory>
+</player>

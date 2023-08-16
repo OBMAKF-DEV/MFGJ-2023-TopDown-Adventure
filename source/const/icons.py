@@ -2,6 +2,10 @@ from source.utils import Directions
 from source.const import SCALE
 import pygame
 
+"""
+Dictionary containing the lists of player animations based of the direction (Key: Direction)
+as well as the current step in the player animation.
+"""
 PLAYER_ICONS = {
     Directions.SOUTH: [f'resources/img/player/south/player0{i}.png' for i in range(6)],
     Directions.NORTH: [f'resources/img/player/north/player0{i}.png' for i in range(6)],
@@ -9,7 +13,11 @@ PLAYER_ICONS = {
     Directions.EAST : [f'resources/img/player/east/player0{i}.png' for i in range(6)]
 }
 
+"""
+** Depreciated -- todo ***
 
+Sets the player icon with sword equipped based off the direction that the player is facing.
+"""
 SWORD_PLAYER_ICONS = {
     Directions.SOUTH: 'resources/img/player_sword.png',
     Directions.NORTH: 'resources/img/player_UP_sword.png',
@@ -17,10 +25,14 @@ SWORD_PLAYER_ICONS = {
     Directions.EAST: 'resources/img/player_R_sword.png'
 }
 
+"""Contains icons needed for the top-bar."""
 TOPBAR_ICONS = {
     'FULL_HEART': 'resources/img/full_heart.png'
 }
 
+"""
+Dictionary containing loaded textures translated for map tiles.
+"""
 TILE_ICONS = {
     'WALL': pygame.transform.scale(
         pygame.image.load('resources/img/tiles/red_brick.png'),

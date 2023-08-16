@@ -12,9 +12,21 @@ import pygame
 
 
 class Inventory(Container):
+    """
+    Represents a Player Inventory system.
+    
+    Attributes:
+        items (list[Item | KeyItem]): A list containing all items stored in the inventory.
+    """
     items = []
     
     def __init__(self, player, items: list[Item]) -> None:
+        """
+        Initializes an instance of the Inventory class.
+        Args:
+            player (Player): The player that the inventory system belongs to.
+            items (list[Item]): A list containing and items that the player is to start with.
+        """
         super(Inventory, self).__init__(player.game, items)
         self.player = player
     
@@ -23,6 +35,14 @@ class Inventory(Container):
 
 
 class Player(Entity):
+    """Main Player (Entity) Class.
+    
+    Groups all player related logic together.
+    
+    Attributes:
+        inventory (Inventory): The players Inventory, for storing items.
+        animation_value (int): An integer value representing the current frame that the player is on.
+    """
     inventory: Inventory
     animation_value = 0
     
@@ -115,7 +135,8 @@ class Player(Entity):
         if direction in Directions:
             self.facing_direction = direction
     
-    def move(self, position):
+    def move(self, position) -> None:
+        """Move the players position if the tile space permits them."""
         x, y = position
         asset = self.game.map.tiles[y//4][x//4]
         
@@ -136,6 +157,10 @@ class Player(Entity):
         return x, y
     
     def interact(self):
+        """
+        Method for interacting with objects in front of the player based off the
+        direction and location that the player is standing.
+        """
         x, y = self.get_facing()
         tile = self.game.map.tiles[y//4][x//4]
         if isinstance(tile, Tile):
@@ -150,6 +175,7 @@ class Player(Entity):
                     return tile[1].object.interact()
 
     def attack(self) -> None:
+        """Represents a strike or attack on an entity by the player."""
         x, y = self.get_facing()
         for npc_types in self.game.npc:
             for npc in npc_types:
