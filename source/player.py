@@ -65,6 +65,9 @@ class Player(Entity):
         self.game.state = GameState.GAME_OVER
     
     def render_topbar(self) -> None:
+        """
+        Displays the top bar containing the players health and location status.
+        """
         width, height = pygame.display.get_desktop_sizes()[0]
         bar = pygame.Surface((width, 80))
         bar.fill(Color.RGB.GRAY)

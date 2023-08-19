@@ -145,7 +145,8 @@ class Game:
         self.render()
     
     def handle_events(self) -> Any:
-        """Handles game events such player input.
+        """
+        Handles game events such player input.
         
         Note:
             IMPORTANT!!! 
@@ -276,6 +277,13 @@ class Game:
                                 self.main_menu.set_state(1)
     
     def render_menu(self):
+        """
+        Renders the games menu based off the game state.
+        
+        Notes:
+            - OPEN_MENU: Handles Container and Inventory menu's.
+            - MAIN_MENU: Handles the main menu.
+        """
         scale = self.graphics["SCALE"]
         
         # Container and Inventory rendering
@@ -345,11 +353,26 @@ class Game:
         pygame.display.flip()
     
     def open_container(self, container):
+        """
+        Handles opening a container in game.
+        
+        Args:
+            container (Container): The container that is being opened.
+        """
         self.container = container
         self.selected_index = 0
         self.state = GameState.OPEN_MENU
     
     def close_container(self, container):
+        """
+        Handles closing a container in game.
+        
+        Args:
+            container (Container): The container being closed.
+
+        Returns:
+
+        """
         self.container = None
         self.selected_index = 0
         self.state = GameState.RUNNING

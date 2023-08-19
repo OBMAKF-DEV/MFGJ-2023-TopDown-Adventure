@@ -7,6 +7,18 @@ from enum import Enum
 
 
 class Container(InteractionObject):
+    """
+    Base Class for any in-game container.
+    Provides methodology for viewing and interacting with a container.
+    
+    Attributes:
+        items (list[Item]): The items that are contained within the container.
+        state (ContainerState): The current state of the container.
+    
+    Args:
+        game (Game): The main game object.
+        items (list[Item] | None): Any items that the container will initialize with.
+    """
     items = []
     state = ContainerState.CLOSED
     
@@ -21,12 +33,18 @@ class Container(InteractionObject):
             return self.open()
     
     def open(self):
+        """
+        Sets the state of the container as OPEN.
+        """
         if self.state == ContainerState.OPEN:
             return
         self.state = ContainerState.OPEN
         self.game.open_container(self)
     
     def close(self):
+        """
+        Sets the state of the container as CLOSED.
+        """
         if self.state == ContainerState.CLOSED:
             return
         self.state = ContainerState.CLOSED
@@ -34,6 +52,9 @@ class Container(InteractionObject):
         print('closed')
     
     def take_all(self):
+        """
+        Takes all the items from the container, appending them to the players inventory.
+        """
         for item in self.items:
             self.game.player.inventory.items.append(item)
             self.game.map.remove_object_data(item)

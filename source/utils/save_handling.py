@@ -6,7 +6,8 @@ import os
 
 
 def save_game(game, slot: int, save_name: str):
-    """Provides access for saving game data to a save file via a game slot.
+    """
+    Allows for saving game data to an XML file via a game slot.
     
     Args:
         game (Game): The main game.
@@ -69,7 +70,9 @@ def save_game(game, slot: int, save_name: str):
 
 
 def load_game(game, slot: int):
-    """Sets the XML data files to load previously saved game data."""
+    """
+    Sets the XML data files to load previously saved game data.
+    """
     DATA_FILES = ['test_map.xml', 'test_map2.xml', 'test_map2b.xml', 'cave_entrance.xml', 'player_data.xml']
     print(str(slot))
     # set data files to the value stored in the slot

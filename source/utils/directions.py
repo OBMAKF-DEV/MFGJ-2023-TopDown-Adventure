@@ -2,6 +2,9 @@ from enum import Enum
 
 
 class Directions(Enum):
+    """
+    Enumerator containing flags for directional values.
+    """
     NORTH = 0
     SOUTH = 1
     EAST = 2

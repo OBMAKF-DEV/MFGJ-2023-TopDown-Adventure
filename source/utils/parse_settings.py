@@ -6,7 +6,13 @@ import tomli
 
 
 class Settings:
-    """Gives a mothodology to be able to load and parse values from the ``settings.toml`` file."""
+    """
+    Provides a way to be able to load and parse values
+    from the ``settings.toml`` file.
+    
+    Args:
+        game (Game): The main game object.
+    """
     _file = 'settings.toml'
 
     def __init__(self, game) -> None:

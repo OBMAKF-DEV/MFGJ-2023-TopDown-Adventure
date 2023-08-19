@@ -4,6 +4,19 @@ from source.const import MenuState, GameState, Color
 
 
 class MainMenu:
+    """
+    The main menu for the game.
+    
+    Attributes:
+        state (MenuState): Flag indicating the state of the menu.
+        selection_index (int): The index indicating what option is currently in focus.
+        options (list[str]): The name of each option that can be selected.
+        commands (dict[str, func]): A dictionary containing the commands that
+            can be executed on selecting from the menu.
+    
+    Args:
+        game (Game): The main game object.
+    """
     state = MenuState.CLOSED
     selection_index: int = 0
     options = ["New Game", "Load Game", "Quit"]
@@ -26,6 +39,11 @@ class MainMenu:
         }
     
     def set_state(self, index: int) -> None:
+        """
+        Sets the state of the menu and handles what the display and options should be.
+        Args:
+            index (int): Number indicating what the menu state should be.
+        """
         match index:
             case 0:
                 self.state = MenuState.CLOSED
@@ -71,6 +89,9 @@ class MainMenu:
         self.game.update()
     
     def open(self) -> None:
+        """
+        Sets the menu state to OPENED.
+        """
         if self.state == MenuState.OPENED:
             return
         self.set_state(1)
@@ -78,6 +99,9 @@ class MainMenu:
         #self.state = MenuState.OPENED
     
     def close(self) -> None:
+        """
+        Sets the menu state to CLOSED.
+        """
         if self.state == MenuState.CLOSED:
             return
         self.set_state(0)

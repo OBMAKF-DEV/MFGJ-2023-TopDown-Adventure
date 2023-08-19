@@ -1,5 +1,9 @@
 class Color:
+    """
+    Provides a general-access for different methods to do with color.
+    """
     class RGB:
+        """Contains RGB values."""
         BLACK = (0, 0, 0)
         WHITE = (255, 255, 255)
         RED = (255, 0, 0)
