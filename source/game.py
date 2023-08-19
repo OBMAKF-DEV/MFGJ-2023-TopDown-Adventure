@@ -5,7 +5,7 @@ from source.map import Map
 from source.player import Player
 from source.main_menu import MainMenu
 from source.utils import *
-from source.const import GameState, ContainerState, MenuState, rgb, Color
+from source.const import GameState, ContainerState, MenuState, Color
 from source.container import Container
 from source.utils.save_handling import load_game, save_game
 import pygame

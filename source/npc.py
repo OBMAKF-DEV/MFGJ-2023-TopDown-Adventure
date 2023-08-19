@@ -2,7 +2,7 @@ import pygame
 from abc import abstractmethod
 
 from source.entity import Entity
-from source.const import EntityState, rgb
+from source.const import EntityState, Color
 from pygame.surface import Surface, SurfaceType
 from source.utils import directions
 from source.const import GameState
@@ -110,7 +110,7 @@ class StoryNPC(NPC):
             conversation = self.get_speech()  # get dialog.
 
             dlg_box = pygame.Surface((150, 80))
-            dlg_box.fill(rgb.WHITE)
+            dlg_box.fill(Color.RGB.WHITE)
 
             self.game.fonts['DIALOG'].render(conversation, dlg_box, (150, 100))
             self.game.screen.blit(dlg_box, (100, 100))

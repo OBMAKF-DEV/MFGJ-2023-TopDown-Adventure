@@ -1,6 +1,6 @@
 import pygame
 
-from source.const import MenuState, GameState, rgb, Color
+from source.const import MenuState, GameState, Color
 
 
 class MainMenu:
