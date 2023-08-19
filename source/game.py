@@ -5,7 +5,7 @@ from source.map import Map
 from source.player import Player
 from source.main_menu import MainMenu
 from source.utils import *
-from source.const import GameState, ContainerState, MenuState, rgb
+from source.const import GameState, ContainerState, MenuState, rgb, Color
 from source.container import Container
 from source.utils.save_handling import load_game, save_game
 import pygame
@@ -128,7 +128,7 @@ class Game:
     
     def update(self) -> None:
         """Updates the current events and visual properties."""
-        self.screen.fill(rgb.BLACK)
+        self.screen.fill(Color.RGB.BLACK)
         if self.state == GameState.RUNNING:
             self.main_menu.options[0] = "Continue"
             self.main_menu.options[1] = "Save Game"
@@ -281,14 +281,15 @@ class Game:
         # Container and Inventory rendering
         if self.state == GameState.OPEN_MENU:
             header = pygame.surface.Surface((110, 225))
-            header.fill(rgb.CHARCOAL)
-            header.blit(self.fonts['MENU'].render(str(self.container).center(20), True, rgb.YELLOW), (5, 5))
+            header.fill(Color.RGB.CHARCOAL)
+            header.blit(self.fonts['MENU'].render(
+                str(self.container).center(20), True, Color.RGB.YELLOW), (5, 5))
             
             menu = pygame.surface.Surface((100, 200))
-            menu.fill(rgb.WHITE)
+            menu.fill(Color.RGB.WHITE)
             
             for i, item in enumerate(self.container.items):
-                color = rgb.RED if i == self.selected_index else rgb.BLACK
+                color = Color.RGB.RED if i == self.selected_index else Color.RGB.BLACK
                 text = self.fonts['MENU'].render(item.name, True, color)
                 menu.blit(text, (0, i * 25))
             header.blit(menu, (5, 20))
@@ -313,31 +314,31 @@ class Game:
                 self.screen.blit(self.main_menu.widgets['title'], ((screen_width/9) - 5, 45))
             
             _ = self.main_menu.widgets['border']
-            _.fill(rgb.TAUPE)
+            _.fill(Color.RGB.TAUPE)
             self.screen.blit(_, ((screen_width/3) - 5, 95))
             
             _ = self.main_menu.widgets['panel']
-            _.fill(rgb.BLACK)
+            _.fill(Color.RGB.BLACK)
             self.screen.blit(_, (screen_width / 3, 100))
             
             _ = self.main_menu.widgets['button']
-            _.fill(rgb.TAUPE if self.main_menu.state != MenuState.CREATE_SAVE else rgb.BLACK)
+            _.fill(Color.RGB.TAUPE if self.main_menu.state != MenuState.CREATE_SAVE else Color.RGB.BLACK)
             self.screen.blit(_, ((screen_width/3) + 5, 105))
             
             if self.main_menu.state == MenuState.CREATE_SAVE:
                 self.screen.blit(
-                    self.fonts['MAIN_MENU'].render(self.user_text, 0, rgb.YELLOW, rgb.MAUVE),
+                    self.fonts['MAIN_MENU'].render(self.user_text, 0, Color.RGB.YELLOW, Color.RGB.MAUVE),
                     ((screen_width/3) + 10, 120)
                 )
             else:
                 for i, item in enumerate(self.main_menu.options):
-                    color = rgb.MAUVE if self.selected_index == i else rgb.CHARCOAL
+                    color = Color.RGB.MAUVE if self.selected_index == i else Color.RGB.CHARCOAL
                     
                     _ = self.main_menu.widgets['label']
                     _.fill(color)
                     self.screen.blit(_, ((screen_width/3) + 10, 110 + ((175/3) * i)))
                     
-                    color = rgb.BLACK if self.selected_index == i else rgb.GRAY
+                    color = Color.RGB.BLACK if self.selected_index == i else Color.RGB.GRAY
                     self.screen.blit(self.fonts['MAIN_MENU'].render(item, 0, color), (
                         (screen_width/3) + 10, 110 + ((170/3) * i + ((170/3)/3))))
             

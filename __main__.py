@@ -4,7 +4,7 @@ import shutil
 from time import sleep
 from source.utils import *
 from source import Game, InteractionObject
-from source.const import GameState, ContainerState, rgb, TOTAL_PLAYER_ANIMATION_VALUE
+from source.const import GameState, ContainerState, rgb, TOTAL_PLAYER_ANIMATION_VALUE, Color
 
 DATA_FILES = [
     'test_map.xml',
@@ -22,7 +22,7 @@ def main():
     
     while game.state != GameState.ENDED:
         
-        game.screen.fill(rgb.BLACK)
+        game.screen.fill(Color.RGB.BLACK)
         game.clock.tick(game.graphics['FPS']/game.graphics['SCALE']*4)
         game.update()
         

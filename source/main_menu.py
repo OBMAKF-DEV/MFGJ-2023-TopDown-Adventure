@@ -1,6 +1,6 @@
 import pygame
 
-from source.const import MenuState, GameState, rgb
+from source.const import MenuState, GameState, rgb, Color
 
 
 class MainMenu:
@@ -47,7 +47,7 @@ class MainMenu:
                     'panel' : pygame.Surface((self.width / 3, 260)),
                     'button': pygame.Surface(((self.width / 3) - 10, 250)),
                     'label' : pygame.Surface((((self.width / 3) - 20), 245 / 4)),
-                    'title' : self.game.fonts['MAIN_MENU'].render("Load Game", 0, rgb.GOLD),
+                    'title' : self.game.fonts['MAIN_MENU'].render("Load Game", 0, Color.RGB.GOLD),
                 }
                 self.game.update()
             case 3:
@@ -57,7 +57,7 @@ class MainMenu:
                     'panel' : pygame.Surface((self.width / 3, 260)),
                     'button': pygame.Surface(((self.width / 3) - 10, 250)),
                     'label' : pygame.Surface((((self.width / 3) - 20), 245 / 4)),
-                    'title' : self.game.fonts['MAIN_MENU'].render("Save Game", 0, rgb.GOLD),
+                    'title' : self.game.fonts['MAIN_MENU'].render("Save Game", 0, Color.RGB.GOLD),
                 }
             case 4:
                 self.state = MenuState.CREATE_SAVE
@@ -66,7 +66,7 @@ class MainMenu:
                     'border': pygame.Surface(((self.width / 6) * 3 + 10, 90)),
                     'panel' : pygame.Surface(((self.width / 6) * 3, 80)),
                     'button': pygame.Surface(((self.width / 6) * 3 - 10, 70)),
-                    'title' : self.game.fonts['MAIN_MENU'].render("Create Save", 0, rgb.GOLD),
+                    'title' : self.game.fonts['MAIN_MENU'].render("Create Save", 0, Color.RGB.GOLD),
                 }
         self.game.update()
     

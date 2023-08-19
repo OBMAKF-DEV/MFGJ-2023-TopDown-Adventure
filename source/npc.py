@@ -1,4 +1,5 @@
 import pygame
+from abc import abstractmethod
 
 from source.entity import Entity
 from source.const import EntityState, rgb
@@ -32,6 +33,7 @@ class NPC(Entity):
         self.is_friendly = friendly
         self.position = position
 
+    @abstractmethod
     def move(self, direction):
         ...  # todo -- generic npc movement.
     
@@ -114,6 +116,9 @@ class StoryNPC(NPC):
             self.game.screen.blit(dlg_box, (100, 100))
             # todo - render in dialog box...
         return
+    
+    def move(self, direction):
+        ...
 
 
 class EnemyNPC(NPC):
@@ -132,3 +137,6 @@ class EnemyNPC(NPC):
             max_health=max_health,
             damage=damage
         )
+    
+    def move(self, direction):
+        ...

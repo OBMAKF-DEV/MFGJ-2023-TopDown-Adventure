@@ -5,7 +5,7 @@ from source.utils.directions import *
 from source.map import Tile
 from source.items import Item
 from source.items import InteractionObject
-from source.const import GameState, EntityState, rgb
+from source.const import GameState, EntityState, rgb, Color
 from source.entity import Entity
 from source.container import Container
 import pygame
@@ -67,16 +67,17 @@ class Player(Entity):
     def render_topbar(self) -> None:
         width, height = pygame.display.get_desktop_sizes()[0]
         bar = pygame.Surface((width, 80))
-        bar.fill(rgb.GRAY)
+        bar.fill(Color.RGB.GRAY)
         bar.blit(
-            self.game.fonts['HEALTH'].render(f"Location: {str(self.game.map.filename).replace('_', ' ').title()}", 0, rgb.BLACK),
+            self.game.fonts['HEALTH'].render(
+                f"Location: {str(self.game.map.filename).replace('_', ' ').title()}", 0, Color.RGB.BLACK),
             ((width / 6) * 4, 30))
         self.game.screen.blit(bar, (0, 0))
         
         # Health Bar
         health_display = pygame.Surface((350, 60))
-        health_display.fill(rgb.GRAY)
-        hp = self.game.fonts['HEALTH'].render(f"HP: {self.health} / {self.max_health}", 0, rgb.BLACK)
+        health_display.fill(Color.RGB.GRAY)
+        hp = self.game.fonts['HEALTH'].render(f"HP: {self.health} / {self.max_health}", 0, Color.RGB.BLACK)
         health_display.blit(hp, (170, 30))
         
         heart = pygame.transform.scale(pygame.image.load(TOPBAR_ICONS['FULL_HEART']), (30, 30))
