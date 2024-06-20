@@ -1,3 +1,5 @@
+<samp>Note: This repository is no longer active.</samp>
+
 # My First Game Jam - Summer 2023
 
 ---
